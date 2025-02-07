@@ -25,29 +25,29 @@ def charger_preferences_utilisateur():
             "marges": {"haut": 20, "bas": 20, "gauche": 20, "droite": 20}
         }
 
-# Convertir une date en toutes lettres
-def date_en_toutes_lettres(date):
-    jours = ["premier", "deux", "trois", "quatre", "cinq", "six", "sept", "huit", "neuf", "dix",
-             "onze", "douze", "treize", "quatorze", "quinze", "seize", "dix-sept", "dix-huit", "dix-neuf",
-             "vingt", "vingt et un", "vingt-deux", "vingt-trois", "vingt-quatre", "vingt-cinq", "vingt-six",
-             "vingt-sept", "vingt-huit", "vingt-neuf", "trente", "trente et un"]
-    mois = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
-    jour_lettres = jours[date.day - 1]
-    mois_lettres = mois[date.month - 1]
-    return f"{jour_lettres} {mois_lettres} {date.year}"
+# Initialiser la variable de session si elle n'existe pas
+if "afficher_preferences" not in st.session_state:
+    st.session_state.afficher_preferences = False
 
-# Décomposer la posologie en unités disponibles
-def decomposer_posologie(posologie, doses):
-    distribution = {}
-    for dose in doses:
-        distribution[dose], posologie = divmod(posologie, dose)
-    return distribution
+# Interface Streamlit
+st.title("Générateur d'ordonnances sécurisées")
 
-# Générer un PDF d'ordonnance
-def generer_ordonnance_pdf(patient_data, preferences, decomposed_dose, unit_label):
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", '', 12)
+if st.button("Modifier les préférences de la structure"):
+    st.session_state.afficher_preferences = not st.session_state.afficher_preferences
+
+if st.session_state.afficher_preferences:
+    st.header("Paramètres de la structure")
+    preferences = charger_preferences_utilisateur()
+    preferences["structure"] = st.text_input("Nom de la structure", preferences["structure"])
+    preferences["adresse"] = st.text_area("Adresse", preferences["adresse"])
+    preferences["finess"] = st.text_input("Numéro FINESS", preferences["finess"])
+    preferences["medecin"] = st.text_input("Nom du médecin", preferences["medecin"])
+    preferences["rpps"] = st.text_input("Numéro RPPS", preferences["rpps"])
+    preferences["logo"] = st.file_uploader("Logo de la structure (optionnel)", type=["png", "jpg", "jpeg"])
+    
+    if st.button("Enregistrer les préférences"):
+        sauvegarder_preferences_utilisateur(preferences)
+        st.success("Préférences enregistrées avec succès")
     
     if preferences.get("logo"):
         pdf.image(preferences["logo"], x=10, y=10, w=40)
