@@ -2,3 +2,4 @@ streamlit
 fpdf
 pandas
 python-barcode
+num2words
