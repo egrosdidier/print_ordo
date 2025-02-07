@@ -68,13 +68,20 @@ patient_data = {
 
 if st.button("Générer l'ordonnance PDF"):
     preferences = charger_preferences_utilisateur()
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.cell(0, 10, txt=f"Ordonnance générée pour {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="L")
-    buffer = io.BytesIO()
-    buffer.write(pdf.output(dest="S").encode("latin1"))
-    buffer.seek(0)
-    st.download_button("Télécharger l'ordonnance", buffer, "ordonnance.pdf", "application/pdf")
+    
+    # Vérification des champs obligatoires
+    if not patient_data["Nom"] or not patient_data["Prenom"]:
+        st.error("Veuillez renseigner le Nom et le Prénom du patient avant de générer l'ordonnance.")
+    else:
+        pdf = FPDF()
+        pdf.add_page()
+        nom = patient_data.get("Nom", "Nom inconnu")
+        prenom = patient_data.get("Prenom", "Prénom inconnu")
+        pdf.cell(0, 10, txt=f"Ordonnance générée pour {nom} {prenom}", ln=True, align="L")
+        buffer = io.BytesIO()
+        buffer.write(pdf.output(dest="S").encode("latin1"))
+        buffer.seek(0)
+        st.download_button("Télécharger l'ordonnance", buffer, "ordonnance.pdf", "application/pdf")
 
 # Importer un fichier CSV
 st.header("Importer un fichier CSV")
@@ -90,9 +97,11 @@ if uploaded_file:
     pdf = FPDF()
     
     for patient in patients:
+        nom = patient.get("Nom", "Nom inconnu")
+        prenom = patient.get("Prenom", "Prénom inconnu")
         single_pdf = FPDF()
         single_pdf.add_page()
-        single_pdf.cell(0, 10, txt=f"Ordonnance générée pour {patient['Nom']} {patient['Prenom']}", ln=True, align="L")
+        single_pdf.cell(0, 10, txt=f"Ordonnance générée pour {nom} {prenom}", ln=True, align="L")
         buffer.write(single_pdf.output(dest="S").encode("latin1"))
     
     buffer.seek(0)
