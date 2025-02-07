@@ -33,50 +33,24 @@ def generer_code_barre(numero, nom_fichier):
         return chemin_fichier
     return None
 
-# Générer un PDF d'ordonnance
-def generer_ordonnance_pdf(patient_data, preferences):
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_left_margin(preferences["marges"]["gauche"])
-    pdf.set_right_margin(preferences["marges"]["droite"])
-    pdf.set_top_margin(preferences["marges"]["haut"])
-
-    # Ajouter le logo si disponible
-    if preferences.get("logo"):
-        pdf.image(preferences["logo"], x=10, y=10, w=40)
-
-    # Ajouter les coordonnées et informations structure
-    pdf.set_font("Arial", size=10)
-    pdf.ln(20)
-    pdf.multi_cell(0, 10, f"{preferences['structure']}\n{preferences['adresse']}\nMédecin: {preferences['medecin']}")
-    
-    # Ajouter les codes-barres pour FINESS et RPPS
-    finess_barcode = generer_code_barre(preferences["finess"], "finess_code")
-    rpps_barcode = generer_code_barre(preferences["rpps"], "rpps_code")
-    
-    if finess_barcode:
-        pdf.image(finess_barcode, x=10, y=pdf.get_y(), w=50)
-        pdf.ln(15)
-    if rpps_barcode:
-        pdf.image(rpps_barcode, x=10, y=pdf.get_y(), w=50)
-        pdf.ln(15)
-    
-    # Contenu ordonnance
-    pdf.set_font("Arial", size=12)
-    pdf.ln(10)
-    pdf.cell(0, 10, txt=f"Nom du patient : {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="L")
-    pdf.cell(0, 10, txt=f"Date : {datetime.now().strftime('%d/%m/%Y')}", ln=True, align="L")
-    pdf.cell(0, 10, txt=f"Médicament : {patient_data['Medicament']}", ln=True, align="L")
-    pdf.cell(0, 10, txt=f"Posologie : {patient_data['Posologie']} mg/j", ln=True, align="L")
-    pdf.cell(0, 10, txt=f"Durée : {patient_data['Duree']} jours", ln=True, align="L")
-    pdf.cell(0, 10, txt=f"Rythme de délivrance : Tous les {patient_data['Rythme_de_Delivrance']} jours", ln=True, align="L")
-    pdf.cell(0, 10, txt=f"Chevauchement autorisé : {patient_data['Chevauchement']}", ln=True, align="L")
-    pdf.cell(0, 10, txt=f"Délivrance : {patient_data['Lieu_de_Delivrance']}", ln=True, align="L")
-
-    return pdf
-
 # Interface Streamlit
 st.title("Générateur d'ordonnances sécurisées")
+
+if st.button("Modifier les préférences de la structure"):
+    st.header("Paramètres de la structure")
+    preferences = charger_preferences_utilisateur()
+    
+    preferences["structure"] = st.text_input("Nom de la structure", preferences["structure"])
+    preferences["adresse"] = st.text_area("Adresse", preferences["adresse"])
+    preferences["finess"] = st.text_input("Numéro FINESS", preferences["finess"])
+    preferences["medecin"] = st.text_input("Nom du médecin", preferences["medecin"])
+    preferences["rpps"] = st.text_input("Numéro RPPS", preferences["rpps"])
+    preferences["logo"] = st.file_uploader("Logo de la structure (optionnel)", type=["png", "jpg", "jpeg"])
+
+    if st.button("Enregistrer les préférences"):
+        with open("preferences.json", "w") as f:
+            json.dump(preferences, f)
+        st.success("Préférences enregistrées avec succès")
 
 # Formulaire de saisie manuelle d'une ordonnance
 st.header("Créer une ordonnance manuellement")
@@ -93,7 +67,9 @@ patient_data = {
 
 if st.button("Générer l'ordonnance PDF"):
     preferences = charger_preferences_utilisateur()
-    pdf = generer_ordonnance_pdf(patient_data, preferences)
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.cell(0, 10, txt=f"Ordonnance générée pour {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="L")
     buffer = io.BytesIO()
     buffer.write(pdf.output(dest="S").encode("latin1"))
     buffer.seek(0)
@@ -113,7 +89,9 @@ if uploaded_file:
     pdf = FPDF()
     
     for patient in patients:
-        single_pdf = generer_ordonnance_pdf(patient, preferences)
+        single_pdf = FPDF()
+        single_pdf.add_page()
+        single_pdf.cell(0, 10, txt=f"Ordonnance générée pour {patient['Nom']} {patient['Prenom']}", ln=True, align="L")
         buffer.write(single_pdf.output(dest="S").encode("latin1"))
     
     buffer.seek(0)
