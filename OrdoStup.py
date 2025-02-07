@@ -81,6 +81,22 @@ def generer_ordonnance_pdf(patient_data, preferences, decomposed_dose, unit_labe
 st.title("Générateur d'ordonnances sécurisées")
 
 if st.button("Modifier les préférences de la structure"):
+    st.session_state.afficher_preferences = not st.session_state.afficher_preferences
+
+if st.session_state.afficher_preferences:
+    st.header("Paramètres de la structure")
+    preferences = charger_preferences_utilisateur()
+    preferences["structure"] = st.text_input("Nom de la structure", preferences["structure"])
+    preferences["adresse"] = st.text_area("Adresse", preferences["adresse"])
+    preferences["finess"] = st.text_input("Numéro FINESS", preferences["finess"])
+    preferences["medecin"] = st.text_input("Nom du médecin", preferences["medecin"])
+    preferences["rpps"] = st.text_input("Numéro RPPS", preferences["rpps"])
+    preferences["logo"] = st.file_uploader("Logo de la structure (optionnel)", type=["png", "jpg", "jpeg"])
+    
+    if st.button("Enregistrer les préférences"):
+        sauvegarder_preferences_utilisateur(preferences)
+        st.success("Préférences enregistrées avec succès")
+        st.rerun()
     st.header("Paramètres de la structure")
     preferences = charger_preferences_utilisateur()
     preferences["structure"] = st.text_input("Nom de la structure", preferences["structure"])
