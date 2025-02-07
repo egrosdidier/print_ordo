@@ -24,19 +24,21 @@ def charger_preferences_utilisateur():
             "marges": {"haut": 20, "bas": 20, "gauche": 20, "droite": 20}
         }
 
-# Générer un code-barres
-def generer_code_barre(numero, nom_fichier):
-    if numero:
-        code128 = barcode.get("code128", numero, writer=ImageWriter())
-        chemin_fichier = f"{nom_fichier}.png"
-        code128.save(chemin_fichier)
-        return chemin_fichier
-    return None
+# Sauvegarder les préférences utilisateur
+def sauvegarder_preferences_utilisateur(preferences):
+    with open("preferences.json", "w") as f:
+        json.dump(preferences, f, indent=4)
 
 # Interface Streamlit
 st.title("Générateur d'ordonnances sécurisées")
 
+if "afficher_preferences" not in st.session_state:
+    st.session_state.afficher_preferences = False
+
 if st.button("Modifier les préférences de la structure"):
+    st.session_state.afficher_preferences = not st.session_state.afficher_preferences
+
+if st.session_state.afficher_preferences:
     st.header("Paramètres de la structure")
     preferences = charger_preferences_utilisateur()
     
@@ -48,8 +50,7 @@ if st.button("Modifier les préférences de la structure"):
     preferences["logo"] = st.file_uploader("Logo de la structure (optionnel)", type=["png", "jpg", "jpeg"])
 
     if st.button("Enregistrer les préférences"):
-        with open("preferences.json", "w") as f:
-            json.dump(preferences, f)
+        sauvegarder_preferences_utilisateur(preferences)
         st.success("Préférences enregistrées avec succès")
 
 # Formulaire de saisie manuelle d'une ordonnance
