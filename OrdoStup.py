@@ -20,8 +20,7 @@ def charger_preferences_utilisateur():
             "finess": "",
             "medecin": "Nom du médecin",
             "rpps": "",
-            "logo": None,
-            "coordonnees": "Coordonnées non configurées"
+            "logo": None
         }
 
 # Sauvegarder les préférences utilisateur
@@ -40,17 +39,44 @@ def generer_code_barre(numero, nom_fichier):
 
 # Convertir une date en toutes lettres
 def date_en_toutes_lettres(date):
-    jours = ["premier", "deux", "trois", "quatre", "cinq", "six", "sept", "huit", "neuf", "dix",
-             "onze", "douze", "treize", "quatorze", "quinze", "seize", "dix-sept", "dix-huit", "dix-neuf",
-             "vingt", "vingt et un", "vingt-deux", "vingt-trois", "vingt-quatre", "vingt-cinq", "vingt-six",
-             "vingt-sept", "vingt-huit", "vingt-neuf", "trente", "trente et un"]
-    mois = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
-    jour_lettres = jours[date.day - 1]
-    mois_lettres = mois[date.month - 1]
-    return f"{jour_lettres} {mois_lettres} {date.year}"
+    return num2words(date.day, lang='fr') + " " + date.strftime("%B %Y")
 
-# Générer un PDF d'ordonnance
-def generer_ordonnance_pdf(patient_data, preferences, decomposed_dose, unit_label):
+# Interface Streamlit
+st.title("Générateur d'ordonnances sécurisées")
+
+if "afficher_preferences" not in st.session_state:
+    st.session_state.afficher_preferences = False
+
+if st.button("Modifier les préférences de la structure"):
+    st.session_state.afficher_preferences = not st.session_state.afficher_preferences
+
+if st.session_state.afficher_preferences:
+    st.header("Paramètres de la structure")
+    preferences = charger_preferences_utilisateur()
+    preferences["structure"] = st.text_input("Nom de la structure", preferences["structure"])
+    preferences["adresse"] = st.text_area("Adresse", preferences["adresse"])
+    preferences["finess"] = st.text_input("Numéro FINESS", preferences["finess"])
+    preferences["medecin"] = st.text_input("Nom du médecin", preferences["medecin"])
+    preferences["rpps"] = st.text_input("Numéro RPPS", preferences["rpps"])
+    preferences["logo"] = st.file_uploader("Logo de la structure (optionnel)", type=["png", "jpg", "jpeg"])
+    
+    if st.button("Enregistrer les préférences"):
+        sauvegarder_preferences_utilisateur(preferences)
+        st.success("Préférences enregistrées avec succès")
+
+st.header("Créer une ordonnance manuellement")
+patient_data = {
+    "Nom": st.text_input("Nom du patient"),
+    "Prenom": st.text_input("Prénom du patient"),
+    "Medicament": st.selectbox("Médicament", ["METHADONE GELULES", "METHADONE SIROP", "BUPRENORPHINE HD", "SUBUTEX", "OROBUPRE"]),
+    "Posologie": st.number_input("Posologie (mg/jour)", min_value=0),
+    "Duree": st.number_input("Durée (jours)", min_value=0),
+    "Rythme_de_Delivrance": st.number_input("Rythme de délivrance (jours)", min_value=0),
+    "Lieu_de_Delivrance": st.text_input("Lieu de délivrance")
+}
+
+if st.button("Générer l'ordonnance PDF"):
+    preferences = charger_preferences_utilisateur()
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", '', 12)
@@ -60,12 +86,14 @@ def generer_ordonnance_pdf(patient_data, preferences, decomposed_dose, unit_labe
     
     pdf.set_xy(10, 50)
     pdf.multi_cell(0, 10, f"{preferences['structure']}\n{preferences['adresse']}\nFINESS: {preferences['finess']}")
+    
     finess_barcode = generer_code_barre(preferences["finess"], "finess_code")
     if finess_barcode:
         pdf.image(finess_barcode, x=10, y=80, w=50)
     
     pdf.set_xy(150, 50)
     pdf.multi_cell(0, 10, f"Dr. {preferences['medecin']}\nRPPS: {preferences['rpps']}")
+    
     rpps_barcode = generer_code_barre(preferences["rpps"], "rpps_code")
     if rpps_barcode:
         pdf.image(rpps_barcode, x=150, y=80, w=50)
@@ -74,16 +102,13 @@ def generer_ordonnance_pdf(patient_data, preferences, decomposed_dose, unit_labe
     pdf.set_xy(10, 100)
     pdf.cell(0, 10, txt=f"Date: {date_ordo}", ln=True, align="L")
     pdf.cell(0, 10, txt=f"Patient: {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="L")
-    pdf.ln(10)
     pdf.cell(0, 10, txt=f"Médicament: {patient_data['Medicament']}", ln=True, align="L")
     pdf.cell(0, 10, txt=f"Dose quotidienne: {num2words(patient_data['Posologie'], lang='fr')} mg", ln=True, align="L")
     pdf.cell(0, 10, txt=f"Traitement pour: {num2words(patient_data['Duree'], lang='fr')} jours", ln=True, align="L")
     pdf.cell(0, 10, txt=f"À délivrer tous les: {num2words(patient_data['Rythme_de_Delivrance'], lang='fr')} jours", ln=True, align="L")
     pdf.cell(0, 10, txt=f"Lieu de délivrance: {patient_data['Lieu_de_Delivrance']}", ln=True, align="L")
-    pdf.ln(10)
-    pdf.cell(0, 10, txt="Soit:", ln=True, align="L")
-    for dose, qty in decomposed_dose.items():
-        if qty > 0:
-            pdf.cell(0, 10, txt=f" - {num2words(qty, lang='fr')} {unit_label} de {num2words(dose, lang='fr')} milligrammes", ln=True, align="L")
     
-    return pdf
+    buffer = io.BytesIO()
+    buffer.write(pdf.output(dest="S").encode("latin1"))
+    buffer.seek(0)
+    st.download_button("Télécharger l'ordonnance", buffer, "ordonnance.pdf", "application/pdf")
