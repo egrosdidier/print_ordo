@@ -4,8 +4,7 @@ import json
 import io
 from fpdf import FPDF
 from datetime import datetime
-import barcode
-from barcode.writer import ImageWriter
+import os
 from num2words import num2words
 
 # Charger les préférences utilisateur
@@ -27,15 +26,6 @@ def charger_preferences_utilisateur():
 def sauvegarder_preferences_utilisateur(preferences):
     with open("preferences.json", "w") as f:
         json.dump(preferences, f, indent=4)
-
-# Générer un code-barres
-def generer_code_barre(numero, nom_fichier):
-    if numero:
-        code128 = barcode.get("code128", numero, writer=ImageWriter())
-        chemin_fichier = f"{nom_fichier}.png"
-        code128.save(chemin_fichier)
-        return chemin_fichier
-    return None
 
 # Convertir une date en toutes lettres
 def date_en_toutes_lettres(date):
@@ -87,16 +77,8 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.set_xy(10, 50)
     pdf.multi_cell(0, 10, f"{preferences['structure']}\n{preferences['adresse']}\nFINESS: {preferences['finess']}")
     
-    finess_barcode = generer_code_barre(preferences["finess"], "finess_code")
-    if finess_barcode:
-        pdf.image(finess_barcode, x=10, y=80, w=50)
-    
     pdf.set_xy(150, 50)
     pdf.multi_cell(0, 10, f"Dr. {preferences['medecin']}\nRPPS: {preferences['rpps']}")
-    
-    rpps_barcode = generer_code_barre(preferences["rpps"], "rpps_code")
-    if rpps_barcode:
-        pdf.image(rpps_barcode, x=150, y=80, w=50)
     
     date_ordo = date_en_toutes_lettres(datetime.now())
     pdf.set_xy(10, 100)
