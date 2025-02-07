@@ -77,7 +77,7 @@ if st.button("Générer l'ordonnance PDF"):
         pdf.add_page()
         nom = patient_data.get("Nom", "Nom inconnu")
         prenom = patient_data.get("Prenom", "Prénom inconnu")
-        pdf.set_font("Arial", '', 12)
+pdf.set_font("Arial", '', 12)
 pdf.cell(0, 10, txt=f"Ordonnance générée pour {nom} {prenom}", ln=True, align="L")
         buffer = io.BytesIO()
         buffer.write(pdf.output(dest="S").encode("latin1"))
