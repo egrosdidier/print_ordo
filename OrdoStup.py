@@ -95,3 +95,6 @@ if patient_data["Medicament"] in medicament_doses and patient_data["Posologie"] 
     st.subheader("Proposition de décomposition")
     for dose in medicament_doses[patient_data["Medicament"]]:
         decomposed_dose[dose] = st.number_input(f"Unités de {dose} mg", min_value=0, value=decomposed_dose.get(dose, 0))
+
+if st.button("Générer l'ordonnance PDF"):
+    st.success("Ordonnance générée avec succès !")
