@@ -116,7 +116,14 @@ if st.button("Générer l'ordonnance PDF"):
     # Ajouter la date en toutes lettres sous le RPPS
     pdf.set_xy(100, 60)
     pdf.set_font("Arial", '', 10)
-    date_actuelle = datetime.now().strftime('%d %B %Y')
+    import locale
+    locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
+    from num2words import num2words
+    import locale
+    locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
+    maintenant = datetime.now()
+    jour_lettres = num2words(maintenant.day, lang='fr')
+    date_actuelle = maintenant.strftime('%A ') + jour_lettres + maintenant.strftime(' %B %Y')
     pdf.cell(0, 5, f"Date: {date_actuelle}", ln=True, align="R")
     
     pdf.set_font("Arial", '', 12)
