@@ -97,6 +97,7 @@ if patient_data["Medicament"] in medicament_doses and patient_data["Posologie"] 
         decomposed_dose[dose] = st.number_input(f"Unités de {dose} mg", min_value=0, value=decomposed_dose.get(dose, 0))
 
 if st.button("Générer l'ordonnance PDF"):
+    with st.spinner("Génération de l'ordonnance en cours..."):
     preferences = charger_preferences_utilisateur()
     pdf = FPDF()
     pdf.add_page()
@@ -128,4 +129,5 @@ RPPS: {preferences['rpps']}")
     buffer.write(pdf.output(dest="S").encode("latin1"))
     buffer.seek(0)
     st.success("Ordonnance générée avec succès !")
-    st.download_button("Télécharger l'ordonnance", buffer, "ordonnance.pdf", "application/pdf")
+    st.success("L'ordonnance a été générée avec succès !")
+st.download_button("Télécharger l'ordonnance", buffer, "ordonnance.pdf", "application/pdf")
