@@ -97,7 +97,7 @@ if st.button("Générer l'ordonnance PDF"):
     else:
         st.warning("Aucun logo valide trouvé. Vérifiez le fichier dans vos préférences.")
     
-    pdf.set_xy(0, 10 + 30)
+    pdf.set_xy(10, 10 + 30)
     pdf.set_font("Arial", 'B', 10)
     pdf.cell(100, 5, preferences["structure"], ln=True, align="L")
     pdf.set_font("Arial", '', 9)
