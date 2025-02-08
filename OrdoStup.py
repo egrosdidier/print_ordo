@@ -69,7 +69,17 @@ if patient_data["Date_de_Naissance"]:
     st.write(f"Âge : {age} ans")
 
 # Autres champs du formulaire
-patient_data["Medicament"] = st.text_input("Médicament")
+medicament_options = [
+    "METHADONE GELULES", "METHADONE SIROP", "BUPRENORPHINE HD", "SUBUTEX", "OROBUPRE",
+    "SUBOXONE", "METHYLPHENIDATE", "CONCERTA", "QUASYM", "RITATINE LP",
+    "RITALINE LI", "MEDIKINET", "(Champ libre)"
+]
+
+selected_medicament = st.selectbox("Médicament", medicament_options)
+if selected_medicament == "(Champ libre)":
+    selected_medicament = st.text_input("Entrez le médicament")
+
+patient_data["Medicament"] = selected_medicament
 patient_data["Posologie"] = st.number_input("Posologie (mg/jour)", min_value=0)
 patient_data["Duree"] = st.number_input("Durée (jours)", min_value=0)
 patient_data["Rythme_de_Delivrance"] = st.number_input("Rythme de délivrance (jours)", min_value=0)
