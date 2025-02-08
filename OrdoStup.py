@@ -110,11 +110,11 @@ if st.button("Générer l'ordonnance PDF"):
     
     pdf.set_xy(150, 50)
     pdf.set_font("Arial", 'B', 10)
-    pdf.cell(0, 5, preferences["medecin"], ln=True, align="R")
+    pdf.cell(0, 5, preferences["medecin"], ln=True, align="C")
     pdf.set_font("Arial", '', 10)
-    pdf.cell(0, 5, f"RPPS: {preferences['rpps']}", ln=True, align="R")
+    pdf.cell(0, 5, f"RPPS: {preferences['rpps']}", ln=True, align="C")
     
-    pdf.cell(0, 10, txt=f"{patient_data['Civilite']} {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="L")
+    pdf.cell(0, 20, txt=f"{patient_data['Civilite']} {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="R")
     
     buffer = io.BytesIO()
     buffer.write(pdf.output(dest="S").encode("latin1"))
