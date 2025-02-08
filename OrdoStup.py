@@ -1,4 +1,4 @@
-import streamlit as st
+zimport streamlit as st
 import json
 import io
 from fpdf import FPDF
@@ -81,8 +81,17 @@ if st.button("Générer l'ordonnance PDF"):
         logo_path = "logo_structure.png"
         with open(logo_path, "wb") as f:
             f.write(preferences["logo"].read())
+    else:
+        from PIL import Image
+        default_logo = Image.new('RGB', (200, 200), color='white')
+        logo_path = "default_logo.png"
+        default_logo.save(logo_path)
+        logo_path = "logo_structure.png"
+        with open(logo_path, "wb") as f:
+            f.write(preferences["logo"].read())
         pdf.image(logo_path, x=10, y=10, w=40)
         pdf.set_xy(10, 50)
+
         pdf.set_font("Arial", 'B', 12)
         pdf.cell(0, 10, preferences["structure"], ln=True, align="L")
         pdf.set_font("Arial", '', 10)
