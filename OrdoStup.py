@@ -98,6 +98,22 @@ if patient_data["Medicament"] in medicament_doses and patient_data["Posologie"] 
 
 if st.button("Générer l'ordonnance PDF"):
     with st.spinner("Génération de l'ordonnance en cours..."):
+        preferences = charger_preferences_utilisateur()
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Arial", '', 12)
+        pdf.cell(0, 10, txt=f"Patient: {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="L")
+        pdf.cell(0, 10, txt=f"Médicament: {patient_data['Medicament']}", ln=True, align="L")
+        pdf.cell(0, 10, txt=f"Dose quotidienne: {num2words(patient_data['Posologie'], lang='fr')} mg", ln=True, align="L")
+        pdf.cell(0, 10, txt=f"Traitement pour: {num2words(patient_data['Duree'], lang='fr')} jours", ln=True, align="L")
+        pdf.cell(0, 10, txt=f"À délivrer tous les: {num2words(patient_data['Rythme_de_Delivrance'], lang='fr')} jours", ln=True, align="L")
+        pdf.cell(0, 10, txt=f"Lieu de délivrance: {patient_data['Lieu_de_Delivrance']}", ln=True, align="L")
+        
+        buffer = io.BytesIO()
+        buffer.write(pdf.output(dest="S").encode("latin1"))
+        buffer.seek(0)
+        st.success("L'ordonnance a été générée avec succès !")
+        st.download_button("Télécharger l'ordonnance", buffer, "ordonnance.pdf", "application/pdf")
     preferences = charger_preferences_utilisateur()
     pdf = FPDF()
     pdf.add_page()
