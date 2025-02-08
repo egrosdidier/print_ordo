@@ -48,6 +48,7 @@ preferences["finess"] = st.sidebar.text_input("Numéro FINESS", preferences["fin
 preferences["medecin"] = st.sidebar.text_input("Nom du médecin", preferences["medecin"])
 preferences["rpps"] = st.sidebar.text_input("Numéro RPPS", preferences["rpps"])
 preferences["coordonnees"] = st.sidebar.text_area("Coordonnées", preferences["coordonnees"])
+preferences["logo"] = st.sidebar.file_uploader("Logo de la structure (PNG, JPG, JPEG)", type=["png", "jpg", "jpeg"])
 preferences["marges"]["haut"] = st.sidebar.slider("Marge haut", 0, 50, preferences["marges"]["haut"])
 preferences["marges"]["bas"] = st.sidebar.slider("Marge bas", 0, 50, preferences["marges"]["bas"])
 preferences["marges"]["gauche"] = st.sidebar.slider("Marge gauche", 0, 50, preferences["marges"]["gauche"])
@@ -71,6 +72,24 @@ patient_data = {
 if st.button("Générer l'ordonnance PDF"):
     pdf = FPDF()
     pdf.add_page()
+    pdf.set_left_margin(preferences["marges"]["gauche"])
+    pdf.set_right_margin(preferences["marges"]["droite"])
+    pdf.set_top_margin(preferences["marges"]["haut"])
+    
+    # Ajouter le logo en haut à gauche si disponible
+    if preferences.get("logo"):
+        logo_path = "logo_structure.png"
+        with open(logo_path, "wb") as f:
+            f.write(preferences["logo"].read())
+        pdf.image(logo_path, x=10, y=10, w=40)
+        pdf.set_xy(10, 50)
+        pdf.set_font("Arial", 'B', 12)
+        pdf.cell(0, 10, preferences["structure"], ln=True, align="L")
+        pdf.set_font("Arial", '', 10)
+        pdf.multi_cell(0, 5, preferences["adresse"], align="L")
+        pdf.set_font("Arial", 'B', 12)
+        pdf.cell(0, 10, preferences["structure"], ln=True, align="L")
+    
     pdf.set_font("Arial", '', 12)
     pdf.cell(0, 10, txt=f"Patient: {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="L")
     pdf.cell(0, 10, txt=f"Médicament: {patient_data['Medicament']}", ln=True, align="L")
