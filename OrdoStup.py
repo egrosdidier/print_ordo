@@ -54,8 +54,8 @@ defaut_logo_path = "logo_structure.png"
 logo_uploaded = st.sidebar.file_uploader("Logo de la structure (PNG, JPG, JPEG)", type=["png", "jpg", "jpeg"])
 if logo_uploaded:
     image = Image.open(logo_uploaded)
-    image = image.convert("RGB")  # Convertit en mode compatible
-    image.save(defaut_logo_path, format="PNG")  # Sauvegarde le fichier sous format PNG
+    image = image.convert("RGB")  # Assure que l’image est bien en RGB et non en mode inversé
+    image.save(defaut_logo_path, format="PNG", optimize=True)  # Sauvegarde en PNG avec optimisation
     preferences["logo"] = defaut_logo_path
 else:
     preferences["logo"] = preferences.get("logo", None)  # Conserve l'ancien logo si existant
@@ -87,7 +87,7 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.set_right_margin(preferences["marges"]["droite"])
     pdf.set_top_margin(preferences["marges"]["haut"])
     
-    # Ajouter le logo si disponible
+    # Ajouter le logo et les informations de la structure
     if preferences.get("logo") and os.path.exists(preferences["logo"]):
         try:
             pdf.image(preferences["logo"], x=10, y=10, w=40)
@@ -95,6 +95,14 @@ if st.button("Générer l'ordonnance PDF"):
             st.warning("Le fichier logo est invalide. Vérifiez le format de l'image.")
     else:
         st.warning("Aucun logo valide trouvé. Vérifiez le fichier dans vos préférences.")
+    
+    pdf.set_xy(10, 50)
+    pdf.set_font("Arial", 'B', 10)
+    pdf.cell(0, 5, preferences["structure"], ln=True, align="L")
+    pdf.set_font("Arial", '', 9)
+    pdf.multi_cell(0, 5, preferences["adresse"], align="L")
+    pdf.set_font("Arial", '', 10)
+    pdf.cell(0, 5, f"FINESS: {preferences['finess']}", ln=True, align="L")
     
     pdf.set_font("Arial", '', 12)
     pdf.cell(0, 10, txt=f"Patient: {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="L")
