@@ -53,12 +53,11 @@ preferences["coordonnees"] = st.sidebar.text_area("Coordonnées", preferences["c
 defaut_logo_path = "logo_structure.png"
 logo_uploaded = st.sidebar.file_uploader("Logo de la structure (PNG, JPG, JPEG)", type=["png", "jpg", "jpeg"])
 if logo_uploaded:
-    image = Image.open(logo_uploaded)
-    image = image.convert("RGB")  # Assure que l’image est bien en RGB et non en mode inversé
-    image.save(defaut_logo_path, format="PNG", optimize=True)  # Sauvegarde en PNG avec optimisation
+    image = Image.open(logo_uploaded).convert("RGB")  # Assure un format sans inversion des couleurs
+    image.save(defaut_logo_path, format="PNG", optimize=True)
     preferences["logo"] = defaut_logo_path
 else:
-    preferences["logo"] = preferences.get("logo", None)  # Conserve l'ancien logo si existant
+    preferences["logo"] = preferences.get("logo", None)
 
 preferences["marges"]["haut"] = st.sidebar.slider("Marge haut", 0, 50, preferences["marges"]["haut"])
 preferences["marges"]["bas"] = st.sidebar.slider("Marge bas", 0, 50, preferences["marges"]["bas"])
@@ -96,12 +95,14 @@ if st.button("Générer l'ordonnance PDF"):
     else:
         st.warning("Aucun logo valide trouvé. Vérifiez le fichier dans vos préférences.")
     
-    pdf.set_xy(10, 50)
+    pdf.set_xy(10, 55)
     pdf.set_font("Arial", 'B', 10)
     pdf.cell(0, 5, preferences["structure"], ln=True, align="L")
     pdf.set_font("Arial", '', 9)
+    pdf.set_x(10)
     pdf.multi_cell(0, 5, preferences["adresse"], align="L")
     pdf.set_font("Arial", '', 10)
+    pdf.set_x(10)
     pdf.cell(0, 5, f"FINESS: {preferences['finess']}", ln=True, align="L")
     
     pdf.set_font("Arial", '', 12)
