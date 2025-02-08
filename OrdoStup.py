@@ -139,8 +139,8 @@ if st.button("Générer l'ordonnance PDF"):
     date_actuelle = f"{jour_semaine} {jour_nombre} {mois} {maintenant.year}"
 
     # Imprimer la date
-    pdf.cell(0, 5, f"Date: {date_actuelle}", ln=True, align="L")
-    pdf.set_xy(150, 55)
+    pdf.cell(0, 5, f"Date: {date_actuelle}", ln=True, align="R")
+    pdf.set_xy(150, 75)
     pdf.set_font("Arial", '', 10)
     pdf.cell(0, 5, f"{patient_data['Civilite']} {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="L")
     
