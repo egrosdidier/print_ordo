@@ -3,6 +3,24 @@ import json
 import io
 from fpdf import FPDF
 from datetime import datetime
+from PIL import Image
+
+# Définir les préférences par défaut
+defaut_preferences = {
+    "structure": "CSAPA",
+    "adresse": "Adresse - XXXXXX Ville",
+    "finess": "00000000000",
+    "medecin": "Dr Prénom NOM",
+    "rpps": "100000000000",
+    "logo": "default_logo.png",
+    "coordonnees": "CSAPA",
+    "marges": {
+        "haut": 20,
+        "bas": 20,
+        "gauche": 20,
+        "droite": 20
+    }
+}
 
 # Charger les préférences utilisateur
 def charger_preferences_utilisateur():
@@ -10,31 +28,20 @@ def charger_preferences_utilisateur():
         with open("preferences.json", "r") as f:
             return json.load(f)
     except FileNotFoundError:
-        return {
-            "structure": "Nom de la structure",
-            "adresse": "Adresse non configurée",
-            "finess": "",
-            "medecin": "Nom du médecin",
-            "rpps": "",
-            "logo": None,
-            "coordonnees": "Coordonnées non configurées",
-            "marges": {
-                "haut": 20,
-                "bas": 20,
-                "gauche": 20,
-                "droite": 20
-            }
-        }
+        return defaut_preferences
 
 # Sauvegarder les préférences utilisateur
 def sauvegarder_preferences_utilisateur(preferences):
     with open("preferences.json", "w") as f:
         json.dump(preferences, f, indent=4)
 
-# Convertir une date en toutes lettres
-def date_en_toutes_lettres(date):
-    mois = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
-    return f"{date.day} {mois[date.month - 1]} {date.year}"
+# Générer un logo blanc par défaut si aucun n'existe
+logo_path = "default_logo.png"
+def generer_logo_defaut():
+    default_logo = Image.new('RGB', (200, 200), color='white')
+    default_logo.save(logo_path)
+
+generer_logo_defaut()
 
 # Interface Streamlit
 st.title("Générateur d'ordonnances sécurisées")
@@ -76,45 +83,12 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.set_right_margin(preferences["marges"]["droite"])
     pdf.set_top_margin(preferences["marges"]["haut"])
     
-    # Ajouter le logo en haut à gauche si disponible
-    if preferences.get("logo"):
-        logo_path = "logo_structure.png"
-        with open(logo_path, "wb") as f:
-            if preferences["logo"] is not None:
-    logo_path = "logo_structure.png"
-    with open(logo_path, "wb") as f:
-        f.write(preferences["logo"].read())
-else:
-    from PIL import Image
-    default_logo = Image.new('RGB', (200, 200), color='white')
-    logo_path = "default_logo.png"
-    default_logo.save(logo_path)
-    logo_path = "logo_structure.png"
-    with open(logo_path, "wb") as f:
-        f.write(preferences["logo"].read())
+    # Ajouter le logo ou le logo par défaut
+    if preferences["logo"]:
         logo_path = "logo_structure.png"
         with open(logo_path, "wb") as f:
             f.write(preferences["logo"].read())
-            with open(logo_path, "wb") as f:
-                f.write(preferences["logo"].read())
-            f.write(preferences["logo"].read())
-    else:
-        from PIL import Image
-        default_logo = Image.new('RGB', (200, 200), color='white')
-        logo_path = "default_logo.png"
-        default_logo.save(logo_path)
-        logo_path = "logo_structure.png"
-        with open(logo_path, "wb") as f:
-            f.write(preferences["logo"].read())
-        pdf.image(logo_path, x=10, y=10, w=40)
-        pdf.set_xy(10, 50)
-
-        pdf.set_font("Arial", 'B', 12)
-        pdf.cell(0, 10, preferences["structure"], ln=True, align="L")
-        pdf.set_font("Arial", '', 10)
-        pdf.multi_cell(0, 5, preferences["adresse"], align="L")
-        pdf.set_font("Arial", 'B', 12)
-        pdf.cell(0, 10, preferences["structure"], ln=True, align="L")
+    pdf.image(logo_path, x=10, y=10, w=40)
     
     pdf.set_font("Arial", '', 12)
     pdf.cell(0, 10, txt=f"Patient: {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="L")
