@@ -127,8 +127,8 @@ if st.button("Générer l'ordonnance PDF"):
     mois_lettres = mois_fr[maintenant.month - 1]
     date_complete = f"{jour_semaine} {jour_lettres} {mois_lettres} {maintenant.year}"
     
-    pdf.set_xy(150, 60)
-    pdf.set_font("Arial", '', 10)
+    pdf.set_xy(150, 70)
+    pdf.set_font("Arial", 'B', 10)
     pdf.cell(0, 5, date_complete, ln=True, align="R")
     
     pdf.cell(0, 20, txt=f"{patient_data['Civilite']} {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="R")
