@@ -54,7 +54,6 @@ defaut_logo_path = "logo_structure.png"
 logo_uploaded = st.sidebar.file_uploader("Logo de la structure (PNG, JPG, JPEG)", type=["png", "jpg", "jpeg"])
 if logo_uploaded:
     image = Image.open(logo_uploaded).convert("RGB")
-    image = ImageOps.autocontrast(image)
     image = ImageOps.invert(ImageOps.grayscale(image)).convert("RGB")
     if image.mode == 'RGB':
         image = ImageOps.invert(image.convert('L')).convert('RGB')
