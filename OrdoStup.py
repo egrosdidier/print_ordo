@@ -80,6 +80,7 @@ if st.button("Générer l'ordonnance PDF"):
     if preferences.get("logo"):
         logo_path = "logo_structure.png"
         with open(logo_path, "wb") as f:
+            if preferences["logo"] is not None:
             f.write(preferences["logo"].read())
     else:
         from PIL import Image
