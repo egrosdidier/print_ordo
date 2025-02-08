@@ -7,13 +7,13 @@ from PIL import Image
 
 # Définir les préférences par défaut
 defaut_preferences = {
-    "structure": "CSAPA",
-    "adresse": "Adresse - XXXXXX Ville",
-    "finess": "00000000000",
-    "medecin": "Dr Prénom NOM",
-    "rpps": "100000000000",
-    "logo": "default_logo.png",
-    "coordonnees": "CSAPA",
+    "structure": "Nom de la structure",
+    "adresse": "Adresse de la structure",
+    "finess": "Numéro FINESS",
+    "medecin": "Nom du médecin",
+    "rpps": "Numéro RPPS",
+    "logo": "logo_structure.png",
+    "coordonnees": "Coordonnées complètes",
     "marges": {
         "haut": 20,
         "bas": 20,
@@ -24,7 +24,6 @@ defaut_preferences = {
 
 # Charger les préférences utilisateur
 def charger_preferences_utilisateur():
-  
     try:
         with open("preferences.json", "r") as f:
             return json.load(f)
@@ -33,22 +32,8 @@ def charger_preferences_utilisateur():
 
 # Sauvegarder les préférences utilisateur
 def sauvegarder_preferences_utilisateur(preferences):
-    if preferences.get("logo") and isinstance(preferences["logo"], bytes):
-        logo_path = "logo_structure.png"
-        with open(logo_path, "wb") as f:
-            f.write(preferences["logo"])
-        preferences["logo"] = logo_path  # Stocke seulement le chemin du fichier
-    
     with open("preferences.json", "w") as f:
         json.dump(preferences, f, indent=4)
-
-# Générer un logo blanc par défaut si aucun n'existe
-logo_path = "default_logo.png"
-def generer_logo_defaut():
-    default_logo = Image.new('RGB', (200, 200), color='white')
-    default_logo.save(logo_path)
-
-generer_logo_defaut()
 
 # Interface Streamlit
 st.title("Générateur d'ordonnances sécurisées")
@@ -62,7 +47,17 @@ preferences["finess"] = st.sidebar.text_input("Numéro FINESS", preferences["fin
 preferences["medecin"] = st.sidebar.text_input("Nom du médecin", preferences["medecin"])
 preferences["rpps"] = st.sidebar.text_input("Numéro RPPS", preferences["rpps"])
 preferences["coordonnees"] = st.sidebar.text_area("Coordonnées", preferences["coordonnees"])
-preferences["logo"] = st.sidebar.file_uploader("Logo de la structure (PNG, JPG, JPEG)", type=["png", "jpg", "jpeg"])
+
+# Gestion du logo
+defaut_logo_path = "logo_structure.png"
+logo_uploaded = st.sidebar.file_uploader("Logo de la structure (PNG, JPG, JPEG)", type=["png", "jpg", "jpeg"])
+if logo_uploaded:
+    with open(defaut_logo_path, "wb") as f:
+        f.write(logo_uploaded.read())
+    preferences["logo"] = defaut_logo_path
+else:
+    preferences["logo"] = preferences.get("logo", defaut_logo_path)
+
 preferences["marges"]["haut"] = st.sidebar.slider("Marge haut", 0, 50, preferences["marges"]["haut"])
 preferences["marges"]["bas"] = st.sidebar.slider("Marge bas", 0, 50, preferences["marges"]["bas"])
 preferences["marges"]["gauche"] = st.sidebar.slider("Marge gauche", 0, 50, preferences["marges"]["gauche"])
@@ -90,12 +85,9 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.set_right_margin(preferences["marges"]["droite"])
     pdf.set_top_margin(preferences["marges"]["haut"])
     
-    # Ajouter le logo ou le logo par défaut
-    if preferences["logo"]:
-        logo_path = "logo_structure.png"
-        with open(logo_path, "wb") as f:
-            f.write(preferences["logo"].read())
-    pdf.image(logo_path, x=10, y=10, w=40)
+    # Ajouter le logo si disponible
+    if preferences.get("logo"):
+        pdf.image(preferences["logo"], x=10, y=10, w=40)
     
     pdf.set_font("Arial", '', 12)
     pdf.cell(0, 10, txt=f"Patient: {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="L")
