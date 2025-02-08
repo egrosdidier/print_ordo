@@ -45,8 +45,7 @@ preferences = charger_preferences_utilisateur()
 preferences["structure"] = st.sidebar.text_input("Nom de la structure", preferences["structure"])
 preferences["adresse"] = st.sidebar.text_area("Adresse", preferences["adresse"])
 preferences["finess"] = st.sidebar.text_input("Numéro FINESS", preferences["finess"])
-preferences["civilite_medecin"] = st.sidebar.selectbox("Civilité", ["Madame", "Monsieur"], index=1)
-    preferences["medecin"] = st.sidebar.text_input("Nom du médecin", preferences["medecin"])
+preferences["medecin"] = st.sidebar.text_input("Nom du médecin", preferences["medecin"])
 preferences["rpps"] = st.sidebar.text_input("Numéro RPPS", preferences["rpps"])
 preferences["coordonnees"] = st.sidebar.text_area("Coordonnées", preferences["coordonnees"])
 
@@ -73,7 +72,7 @@ if st.sidebar.button("Sauvegarder les préférences"):
 # Interface de saisie de l'ordonnance
 st.header("Créer une ordonnance")
 patient_data = {
-    "Chevauchement_Autorise": st.selectbox("Chevauchement autorisé", ["Oui", "Non"], index=1),
+    "Civilite": st.selectbox("Civilité", ["Madame", "Monsieur"], index=1),
     "Nom": st.text_input("Nom du patient"),
     "Prenom": st.text_input("Prénom du patient"),
     "Medicament": st.text_input("Médicament"),
@@ -81,6 +80,7 @@ patient_data = {
     "Duree": st.number_input("Durée (jours)", min_value=0),
     "Rythme_de_Delivrance": st.number_input("Rythme de délivrance (jours)", min_value=0),
     "Lieu_de_Delivrance": st.text_input("Lieu de délivrance")
+    "Chevauchement_Autorise": st.selectbox("Chevauchement autorisé", ["Oui", "Non"], index=1),
 }
 
 if st.button("Générer l'ordonnance PDF"):
@@ -139,10 +139,12 @@ if st.button("Générer l'ordonnance PDF"):
     date_actuelle = f"{jour_semaine} {jour_nombre} {mois} {maintenant.year}"
 
     # Imprimer la date
-    pdf.cell(0, 5, f"Date: {date_actuelle}", ln=True, align="R")
+    pdf.cell(0, 5, f"Date: {date_actuelle}", ln=True, align="L")
+    pdf.set_xy(150, 55)
+    pdf.set_font("Arial", '', 10)
+    pdf.cell(0, 5, f"{patient_data['Civilite']} {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="L")
     
     pdf.set_font("Arial", '', 10)
-    pdf.cell(0, 10, txt=f"{preferences['civilite_medecin']} {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="R")
     pdf.cell(0, 20, txt=f"Médicament: {patient_data['Medicament']}", ln=True, align="L")
     pdf.cell(0, 10, txt=f"Posologie: {patient_data['Posologie']} mg/j", ln=True, align="L")
     pdf.cell(0, 10, txt=f"Durée: {patient_data['Duree']} jours", ln=True, align="L")
