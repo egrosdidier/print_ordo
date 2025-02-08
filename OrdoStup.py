@@ -24,6 +24,7 @@ defaut_preferences = {
 
 # Charger les préférences utilisateur
 def charger_preferences_utilisateur():
+  
     try:
         with open("preferences.json", "r") as f:
             return json.load(f)
@@ -32,6 +33,12 @@ def charger_preferences_utilisateur():
 
 # Sauvegarder les préférences utilisateur
 def sauvegarder_preferences_utilisateur(preferences):
+    if preferences.get("logo") and isinstance(preferences["logo"], bytes):
+        logo_path = "logo_structure.png"
+        with open(logo_path, "wb") as f:
+            f.write(preferences["logo"])
+        preferences["logo"] = logo_path  # Stocke seulement le chemin du fichier
+    
     with open("preferences.json", "w") as f:
         json.dump(preferences, f, indent=4)
 
