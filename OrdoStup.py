@@ -103,6 +103,9 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.set_xy(150, 10 + 40 + 5)
     pdf.set_font("Arial", 'B', 10)
     pdf.cell(0, 5, preferences["medecin"], ln=True, align="R")
+    pdf.set_xy(150, 10 + 40 + 10)
+    pdf.set_font("Arial", '', 10)
+    pdf.cell(0, 5, f"RPPS: {preferences['rpps']}", ln=True, align="R")
     pdf.set_x(150)
     pdf.set_font("Arial", '', 10)
     pdf.cell(0, 5, f"RPPS: {preferences['rpps']}", ln=True, align="R")  # Même hauteur que le nom de la structure
