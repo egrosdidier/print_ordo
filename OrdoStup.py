@@ -84,6 +84,14 @@ if st.button("Générer l'ordonnance PDF"):
     logo_path = "logo_structure.png"
     with open(logo_path, "wb") as f:
         f.write(preferences["logo"].read())
+else:
+    from PIL import Image
+    default_logo = Image.new('RGB', (200, 200), color='white')
+    logo_path = "default_logo.png"
+    default_logo.save(logo_path)
+    logo_path = "logo_structure.png"
+    with open(logo_path, "wb") as f:
+        f.write(preferences["logo"].read())
         logo_path = "logo_structure.png"
         with open(logo_path, "wb") as f:
             f.write(preferences["logo"].read())
