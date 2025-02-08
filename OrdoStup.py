@@ -97,12 +97,12 @@ if st.button("Générer l'ordonnance PDF"):
     else:
         st.warning("Aucun logo valide trouvé. Vérifiez le fichier dans vos préférences.")
     
-    pdf.set_xy(10, 10 + 40)
+    pdf.set_xy(10, 10 + 30)
     pdf.set_font("Arial", 'B', 10)
     pdf.cell(100, 5, preferences["structure"], ln=False, align="L")
     
     # Ajouter le nom du médecin et RPPS alignés à droite
-    pdf.set_xy(150, 55)
+    pdf.set_xy(150, 40)
     pdf.set_font("Arial", 'B', 10)
     pdf.cell(0, 5, preferences["medecin"], ln=True, align="R")
     pdf.set_xy(150, 60)
