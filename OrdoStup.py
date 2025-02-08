@@ -100,6 +100,15 @@ if st.button("Générer l'ordonnance PDF"):
     preferences = charger_preferences_utilisateur()
     pdf = FPDF()
     pdf.add_page()
+    if preferences.get("logo"):
+        pdf.image(preferences["logo"], x=10, y=10, w=40)
+    pdf.set_xy(10, 50)
+    pdf.multi_cell(0, 10, f"{preferences['structure']}
+{preferences['adresse']}
+FINESS: {preferences['finess']}")
+    pdf.set_xy(150, 50)
+    pdf.multi_cell(0, 10, f"Dr. {preferences['medecin']}
+RPPS: {preferences['rpps']}")
     pdf.set_font("Arial", '', 12)
     pdf.cell(0, 10, txt=f"Patient: {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="L")
     pdf.cell(0, 10, txt=f"Médicament: {patient_data['Medicament']}", ln=True, align="L")
