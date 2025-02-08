@@ -99,15 +99,25 @@ if st.button("Générer l'ordonnance PDF"):
     
     pdf.set_xy(10, 10 + 30)
     pdf.set_font("Arial", 'B', 10)
-    pdf.cell(100, 5, preferences["structure"], ln=False, align="L")
+    pdf.cell(100, 5, preferences["structure"], ln=True, align="L")
+    pdf.set_font("Arial", '', 9)
+    pdf.cell(100, 5, preferences["adresse"], ln=True, align="L")
+    pdf.set_font("Arial", '', 10)
+    pdf.cell(100, 5, f"FINESS: {preferences['finess']}", ln=True, align="L")
     
     # Ajouter le nom du médecin et RPPS alignés à droite
     pdf.set_xy(150, 40)
     pdf.set_font("Arial", 'B', 10)
-    pdf.cell(0, 5, preferences["medecin"], ln=True, align="R")
-    pdf.set_xy(150, 60)
+    pdf.cell(0, 5, preferences["medecin"], ln=True, align="L")
+    pdf.set_xy(150, 45)
     pdf.set_font("Arial", '', 10)
-    pdf.cell(0, 5, f"RPPS: {preferences['rpps']}", ln=True, align="R")
+    pdf.cell(0, 5, f"RPPS: {preferences['rpps']}", ln=True, align="L")
+    
+    # Ajouter la date en toutes lettres sous le RPPS
+    pdf.set_xy(100, 60)
+    pdf.set_font("Arial", '', 10)
+    date_actuelle = datetime.now().strftime('%d %B %Y')
+    pdf.cell(0, 5, f"Date: {date_actuelle}", ln=True, align="R")
     
     pdf.set_font("Arial", '', 12)
     pdf.cell(0, 10, txt=f"Patient: {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="L")
