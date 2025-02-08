@@ -72,7 +72,6 @@ if st.sidebar.button("Sauvegarder les préférences"):
 # Interface de saisie de l'ordonnance
 st.header("Créer une ordonnance")
 patient_data = {
-    "Date_de_Naissance": st.date_input("Date de naissance"),
     "Civilite": st.selectbox("Civilité", ["Madame", "Monsieur"], index=1),
     "Nom": st.text_input("Nom du patient"),
     "Prenom": st.text_input("Prénom du patient"),
