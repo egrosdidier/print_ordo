@@ -81,6 +81,9 @@ if st.button("Générer l'ordonnance PDF"):
         logo_path = "logo_structure.png"
         with open(logo_path, "wb") as f:
             if preferences["logo"] is not None:
+        logo_path = "logo_structure.png"
+        with open(logo_path, "wb") as f:
+            f.write(preferences["logo"].read())
             with open(logo_path, "wb") as f:
                 f.write(preferences["logo"].read())
             f.write(preferences["logo"].read())
