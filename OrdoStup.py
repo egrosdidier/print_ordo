@@ -99,11 +99,14 @@ if st.button("Générer l'ordonnance PDF"):
     
     pdf.set_xy(10, 10 + 30)
     pdf.set_font("Arial", 'B', 10)
-    pdf.cell(100, 5, preferences["structure"], ln=True, align="L")
+    pdf.cell(0, 5, preferences["structure"], ln=True, align="L")
+    pdf.set_x(10)  # Assurer l'alignement à gauche de l'adresse
     pdf.set_font("Arial", '', 9)
-    pdf.cell(100, 5, preferences["adresse"], ln=True, align="L")
+    pdf.cell(0, 5, preferences["adresse"], ln=True, align="L")
+    pdf.set_x(10)  # Assurer l'alignement à gauche du FINESS
     pdf.set_font("Arial", '', 10)
-    pdf.cell(100, 5, f"FINESS: {preferences['finess']}", ln=True, align="L")
+    pdf.cell(0, 5, f"FINESS: {preferences['finess']}", ln=True, align="L")
+
     
     # Ajouter le nom du médecin et RPPS alignés à droite
     pdf.set_xy(150, 40)
