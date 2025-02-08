@@ -116,11 +116,24 @@ if st.button("Générer l'ordonnance PDF"):
     # Ajouter la date en toutes lettres sous le RPPS
     pdf.set_xy(100, 60)
     pdf.set_font("Arial", '', 10)
-    import locale
-    locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
-    from num2words import num2words
     # Date en toutes lettres
-    
+    from num2words import num2words
+    from datetime import datetime
+
+    # Dictionnaire pour les jours et mois en français
+    jours_fr = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"]
+    mois_fr = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
+
+    # Obtenir la date actuelle
+    maintenant = datetime.now()
+    jour_semaine = jours_fr[maintenant.weekday()]  # Récupère le jour en toutes lettres
+    mois = mois_fr[maintenant.month - 1]  # Récupère le mois en toutes lettres
+    jour_nombre = num2words(maintenant.day, lang='fr')  # Convertit le nombre en lettres
+
+    # Construire la date finale
+    date_actuelle = f"{jour_semaine} {jour_nombre} {mois} {maintenant.year}"
+
+    # Imprimer la date
     pdf.cell(0, 5, f"Date: {date_actuelle}", ln=True, align="R")
     
     pdf.set_font("Arial", '', 12)
