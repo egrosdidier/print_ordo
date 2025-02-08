@@ -79,7 +79,7 @@ patient_data = {
     "Posologie": st.number_input("Posologie (mg/jour)", min_value=0),
     "Duree": st.number_input("Durée (jours)", min_value=0),
     "Rythme_de_Delivrance": st.number_input("Rythme de délivrance (jours)", min_value=0),
-    "Lieu_de_Delivrance": st.text_input("Lieu de délivrance")
+    "Lieu_de_Delivrance": st.text_input("Lieu de délivrance"),,
     "Chevauchement_Autorise": st.selectbox("Chevauchement autorisé", ["Oui", "Non"], index=1),
 }
 
