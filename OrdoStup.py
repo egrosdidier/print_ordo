@@ -45,7 +45,8 @@ preferences = charger_preferences_utilisateur()
 preferences["structure"] = st.sidebar.text_input("Nom de la structure", preferences["structure"])
 preferences["adresse"] = st.sidebar.text_area("Adresse", preferences["adresse"])
 preferences["finess"] = st.sidebar.text_input("Numéro FINESS", preferences["finess"])
-preferences["medecin"] = st.sidebar.text_input("Nom du médecin", preferences["medecin"])
+preferences["civilite_medecin"] = st.sidebar.selectbox("Civilité", ["Madame", "Monsieur"], index=1)
+    preferences["medecin"] = st.sidebar.text_input("Nom du médecin", preferences["medecin"])
 preferences["rpps"] = st.sidebar.text_input("Numéro RPPS", preferences["rpps"])
 preferences["coordonnees"] = st.sidebar.text_area("Coordonnées", preferences["coordonnees"])
 
@@ -72,6 +73,7 @@ if st.sidebar.button("Sauvegarder les préférences"):
 # Interface de saisie de l'ordonnance
 st.header("Créer une ordonnance")
 patient_data = {
+    "Chevauchement_Autorise": st.selectbox("Chevauchement autorisé", ["Oui", "Non"], index=1),
     "Nom": st.text_input("Nom du patient"),
     "Prenom": st.text_input("Prénom du patient"),
     "Medicament": st.text_input("Médicament"),
@@ -104,7 +106,7 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.set_font("Arial", '', 9)
     pdf.cell(0, 5, preferences["adresse"], ln=True, align="L")
     pdf.set_x(10)  # Assurer l'alignement à gauche du FINESS
-    pdf.set_font("Arial", '', 10)
+    pdf.set_font("Arial", '', 9)
     pdf.cell(0, 5, f"FINESS: {preferences['finess']}", ln=True, align="L")
 
     
@@ -139,13 +141,14 @@ if st.button("Générer l'ordonnance PDF"):
     # Imprimer la date
     pdf.cell(0, 5, f"Date: {date_actuelle}", ln=True, align="R")
     
-    pdf.set_font("Arial", '', 12)
-    pdf.cell(0, 10, txt=f"Patient: {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="L")
-    pdf.cell(0, 10, txt=f"Médicament: {patient_data['Medicament']}", ln=True, align="L")
+    pdf.set_font("Arial", '', 10)
+    pdf.cell(0, 10, txt=f"{preferences['civilite_medecin']} {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="R")
+    pdf.cell(0, 20, txt=f"Médicament: {patient_data['Medicament']}", ln=True, align="L")
     pdf.cell(0, 10, txt=f"Posologie: {patient_data['Posologie']} mg/j", ln=True, align="L")
     pdf.cell(0, 10, txt=f"Durée: {patient_data['Duree']} jours", ln=True, align="L")
     pdf.cell(0, 10, txt=f"Rythme de délivrance: Tous les {patient_data['Rythme_de_Delivrance']} jours", ln=True, align="L")
     pdf.cell(0, 10, txt=f"Lieu de délivrance: {patient_data['Lieu_de_Delivrance']}", ln=True, align="L")
+    pdf.cell(0, 10, txt=f"Chevauchement autorisé: {patient_data['Chevauchement_Autorise']}", ln=True, align="L")
     
     buffer = io.BytesIO()
     buffer.write(pdf.output(dest="S").encode("latin1"))
