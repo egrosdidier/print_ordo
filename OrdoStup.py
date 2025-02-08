@@ -97,21 +97,21 @@ if st.button("Générer l'ordonnance PDF"):
     else:
         st.warning("Aucun logo valide trouvé. Vérifiez le fichier dans vos préférences.")
     
-    pdf.set_xy(10, 10 + 30)
+    pdf.set_xy(0, 10 + 30)
     pdf.set_font("Arial", 'B', 10)
     pdf.cell(100, 5, preferences["structure"], ln=True, align="L")
     pdf.set_font("Arial", '', 9)
-    pdf.cell(100, 0, preferences["adresse"], ln=True, align="L")
+    pdf.cell(100, 5, preferences["adresse"], ln=True, align="L")
     pdf.set_font("Arial", '', 10)
-    pdf.cell(100, 0, f"FINESS: {preferences['finess']}", ln=True, align="L")
+    pdf.cell(100, 5, f"FINESS: {preferences['finess']}", ln=True, align="L")
     
     # Ajouter le nom du médecin et RPPS alignés à droite
     pdf.set_xy(150, 40)
     pdf.set_font("Arial", 'B', 10)
-    pdf.cell(0, 5, preferences["medecin"], ln=True, align="L")
+    pdf.cell(0, 5, preferences["medecin"], ln=True, align="C")
     pdf.set_xy(150, 45)
     pdf.set_font("Arial", '', 10)
-    pdf.cell(0, 5, f"RPPS: {preferences['rpps']}", ln=True, align="L")
+    pdf.cell(0, 5, f"RPPS: {preferences['rpps']}", ln=True, align="C")
     
     # Ajouter la date en toutes lettres sous le RPPS
     pdf.set_xy(100, 60)
