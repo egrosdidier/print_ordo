@@ -1,6 +1,7 @@
 import streamlit as st
 import json
 import io
+import os
 from fpdf import FPDF
 from datetime import datetime
 from PIL import Image
@@ -12,7 +13,7 @@ defaut_preferences = {
     "finess": "Numéro FINESS",
     "medecin": "Nom du médecin",
     "rpps": "Numéro RPPS",
-    "logo": "logo_structure.png",
+    "logo": None,
     "coordonnees": "Coordonnées complètes",
     "marges": {
         "haut": 20,
@@ -52,11 +53,12 @@ preferences["coordonnees"] = st.sidebar.text_area("Coordonnées", preferences["c
 defaut_logo_path = "logo_structure.png"
 logo_uploaded = st.sidebar.file_uploader("Logo de la structure (PNG, JPG, JPEG)", type=["png", "jpg", "jpeg"])
 if logo_uploaded:
-    with open(defaut_logo_path, "wb") as f:
-        f.write(logo_uploaded.read())
+    image = Image.open(logo_uploaded)
+    image = image.convert("RGB")  # Convertit en mode compatible
+    image.save(defaut_logo_path, format="PNG")  # Sauvegarde le fichier sous format PNG
     preferences["logo"] = defaut_logo_path
 else:
-    preferences["logo"] = preferences.get("logo", defaut_logo_path)
+    preferences["logo"] = preferences.get("logo", None)  # Conserve l'ancien logo si existant
 
 preferences["marges"]["haut"] = st.sidebar.slider("Marge haut", 0, 50, preferences["marges"]["haut"])
 preferences["marges"]["bas"] = st.sidebar.slider("Marge bas", 0, 50, preferences["marges"]["bas"])
@@ -86,8 +88,13 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.set_top_margin(preferences["marges"]["haut"])
     
     # Ajouter le logo si disponible
-    if preferences.get("logo"):
-        pdf.image(preferences["logo"], x=10, y=10, w=40)
+    if preferences.get("logo") and os.path.exists(preferences["logo"]):
+        try:
+            pdf.image(preferences["logo"], x=10, y=10, w=40)
+        except RuntimeError:
+            st.warning("Le fichier logo est invalide. Vérifiez le format de l'image.")
+    else:
+        st.warning("Aucun logo valide trouvé. Vérifiez le fichier dans vos préférences.")
     
     pdf.set_font("Arial", '', 12)
     pdf.cell(0, 10, txt=f"Patient: {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="L")
