@@ -110,10 +110,7 @@ if st.button("Générer l'ordonnance PDF"):
     
     pdf.set_xy(150, 50)
     pdf.set_font("Arial", 'B', 10)
-    pdf.multi_cell(0, 5, f"{preferences['medecin']}
-", align="C")
-    pdf.set_font("Arial", '', 10)
-    pdf.multi_cell(0, 5, f"RPPS: {preferences['rpps']}", align="C")
+    pdf.multi_cell(0, 5, f"{preferences['medecin']}\nRPPS: {preferences['rpps']}", align="C")
     
     # Afficher la date en toutes lettres
     from num2words import num2words
