@@ -53,7 +53,9 @@ preferences["coordonnees"] = st.sidebar.text_area("Coordonnées", preferences["c
 defaut_logo_path = "logo_structure.png"
 logo_uploaded = st.sidebar.file_uploader("Logo de la structure (PNG, JPG, JPEG)", type=["png", "jpg", "jpeg"])
 if logo_uploaded:
-    image = Image.open(logo_uploaded).convert("RGB")
+    image = Image.open(logo_uploaded).convert("RGBA")
+    white_background = Image.new("RGBA", image.size, (255, 255, 255, 255))
+    image = Image.alpha_composite(white_background, image).convert("RGB")
     image.save(defaut_logo_path, format="PNG", optimize=True)
     preferences["logo"] = defaut_logo_path
 else:
