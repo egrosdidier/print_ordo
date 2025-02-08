@@ -110,7 +110,23 @@ if st.button("Générer l'ordonnance PDF"):
     
     pdf.set_xy(150, 50)
     pdf.set_font("Arial", 'B', 10)
-    pdf.multi_cell(0, 5, f"{preferences['medecin']} RPPS: {preferences['rpps']}", align="C")
+    pdf.cell(0, 5, preferences['medecin'], ln=True, align="C")
+    pdf.set_font("Arial", '', 10)
+    pdf.cell(0, 5, f"RPPS: {preferences['rpps']}", ln=True, align="C")
+    
+    # Afficher la date en toutes lettres
+    from num2words import num2words
+    jours_fr = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"]
+    mois_fr = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
+    maintenant = datetime.datetime.now()
+    jour_lettres = num2words(maintenant.day, lang='fr')
+    jour_semaine = jours_fr[maintenant.weekday()]
+    mois_lettres = mois_fr[maintenant.month - 1]
+    date_complete = f"{jour_semaine} {jour_lettres} {mois_lettres} {maintenant.year}"
+    
+    pdf.set_xy(150, 60)
+    pdf.set_font("Arial", '', 10)
+    pdf.cell(0, 5, date_complete, ln=True, align="R")
     
     pdf.cell(0, 20, txt=f"{patient_data['Civilite']} {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="R")
     
