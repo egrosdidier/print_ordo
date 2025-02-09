@@ -361,8 +361,8 @@ if st.button("Générer l'ordonnance PDF"):
     else:
         pdf.cell(0, 5, "Décomposition impossible pour ce médicament.", ln=True, align="L")
     pdf.set_font("Arial", '', 10)
-    pdf.cell(0, 5, f"Pendant : {num2words(patient_data['Duree'], lang='fr')} jours", ln=True, align="L")    
-    pdf.set_font("Arial", '', 15)
+    pdf.cell(0, 10, f"Pendant : {num2words(patient_data['Duree'], lang='fr')} jours", ln=True, align="L")    
+    pdf.set_font("Arial", '', 10)
 # Vérification pour ajouter (délivrance en une fois) si durée = rythme
     if patient_data["Rythme_de_Delivrance"] == patient_data["Duree"]:
         pdf.cell(0, 5, f"A délivrer tous les {num2words(patient_data['Rythme_de_Delivrance'], lang='fr')} jours (délivrance en une fois)", ln=True, align="L")
