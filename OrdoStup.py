@@ -133,7 +133,7 @@ if st.button("Générer l'ordonnance PDF"):
     mois_fr = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
     maintenant = datetime.datetime.now()
     jour_lettres = num2words(maintenant.day, lang='fr')
-    jour_semaine = jours_fr[maintenant.weekday()]
+    jour_semaine = jours_fr[maintenant.weekday()] 
     mois_lettres = mois_fr[maintenant.month - 1]
     date_complete = f"{jour_semaine} {jour_lettres} {mois_lettres} {maintenant.year}"
     
