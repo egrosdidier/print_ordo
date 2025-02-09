@@ -52,11 +52,10 @@ def decomposer_posologie(medicament, dose_totale):
 # Fonction posologie en toutes lettes
 from num2words import num2words
 def posologie_en_toutes_lettres(posologie):
-"""Convertit une posologie en toutes lettres."""
     if posologie > 0:
         return num2words(posologie, lang='fr')
     return "zéro"
-    
+
 # Charger les préférences utilisateur
 def charger_preferences_utilisateur():
     try:
