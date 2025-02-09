@@ -61,11 +61,11 @@ if st.sidebar.button("Sauvegarder les préférences"):
     st.sidebar.success("Préférences enregistrées avec succès !")
 # Interface de saisie de l'ordonnance
 st.header("Créer une ordonnance")
-# Saisie des informations du patient
+# Saisie des informations du patient avec valeurs par défaut
 patient_data = {
     "Civilite": st.selectbox("Civilité", ["Madame", "Monsieur"], index=1),
-    "Nom": st.text_input("Nom du patient"),
-    "Prenom": st.text_input("Prénom du patient"),
+    "Nom": st.text_input("Nom du patient", value="NOM"),
+    "Prenom": st.text_input("Prénom du patient", value="Prénom"),
     "Date_de_Naissance": st.date_input("Date de naissance", value=None, format="DD/MM/YYYY"),
 }
 # Liste déroulante des médicaments
@@ -147,7 +147,7 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.cell(0, 5, f"Né(e) le : {date_naissance} (Âge: {age})", ln=True, align="R")
 # Ajouter les informations de l'ordonnance
     pdf.set_font("Arial", 'B', 10)
-    pdf.cell(0, 10, txt=f"Médicament: {patient_data.get('Medicament', 'Non spécifié')}", ln=True, align="L")
+    pdf.cell(0, 10, txt=f"{patient_data.get('Medicament', 'Non spécifié')}", ln=True, align="L")
     pdf.set_font("Arial", '', 10)
     pdf.cell(0, 5, txt=f"Posologie: {patient_data.get('Posologie', 'Non spécifiée')} mg/j", ln=True, align="L")
     pdf.cell(0, 5, txt=f"Durée: {patient_data.get('Duree', 'Non spécifiée')} jours", ln=True, align="L")
