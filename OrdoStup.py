@@ -68,7 +68,7 @@ patient_data = {
     "Prenom": st.text_input("Prénom du patient", value="Prénom"),
     "Date_de_Naissance": st.date_input("Date de naissance", value=None, format="DD/MM/YYYY"),
   import re
-
+}
 def generer_num_secu_base(civilite, date_naissance):
     """Génère les 6 premiers chiffres du numéro de Sécurité Sociale."""
     if not date_naissance:
