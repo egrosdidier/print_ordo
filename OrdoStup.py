@@ -22,6 +22,33 @@ defaut_preferences = {
         "droite": 20
     }
 }
+# Fonction decomposer les posologies
+import re
+def decomposer_posologie(medicament, dose_totale):
+    """Décompose la posologie en fonction des unités disponibles pour chaque médicament."""
+    
+    decompositions = {
+        "METHADONE GELULES": [40, 20, 10, 5, 1],
+        "METHADONE SIROP": [60, 40, 20, 10, 5, 1],
+        "BUPRENORPHINE HD": [8, 6, 2],
+        "SUBUTEX": [8, 2, 0.4],
+        "OROBUPRE": [8, 2]
+    }
+
+    if medicament not in decompositions or dose_totale <= 0:
+        return {}
+
+    result = {}
+    reste = dose_totale
+
+    for unite in decompositions[medicament]:
+        if reste >= unite:
+            quantite = reste // unite
+            reste = reste % unite
+            result[unite] = quantite
+
+    return result  # Retourne un dictionnaire {unité: quantité}
+
 # Charger les préférences utilisateur
 def charger_preferences_utilisateur():
     try:
@@ -33,6 +60,7 @@ def charger_preferences_utilisateur():
 def sauvegarder_preferences_utilisateur(preferences):
     with open("preferences.json", "w") as f:
         json.dump(preferences, f, indent=4)
+
 # Interface Streamlit
 st.title("Générateur d'ordonnances sécurisées")
 # Interface de saisie des préférences
@@ -148,10 +176,61 @@ if selected_medicament == "(Champ libre)":
 # Assigner correctement la valeur au dictionnaire patient_data
 patient_data["Medicament"] = selected_medicament if selected_medicament else "Non spécifié"
 patient_data["Posologie"] = st.number_input("Posologie (mg/jour)", min_value=0)
+# Décomposition automatique de la posologie
+decomposition = decomposer_posologie(patient_data["Medicament"], patient_data["Posologie"])
+
+# Affichage de la décomposition avec possibilité de modification
+st.subheader("Décomposition de la posologie")
+
+if decomposition:
+    for unite, quantite in decomposition.items():
+        nouvelle_valeur = st.number_input(
+            f"{quantite} unité(s) de {unite} mg", 
+            min_value=0, 
+            value=quantite, 
+            step=1
+        )
+        decomposition[unite] = nouvelle_valeur  # Mise à jour si l'utilisateur modifie
+
+    # Convertir la décomposition en texte pour affichage sur PDF
+    decomposition_text = "Soit : " + ", ".join(
+        [f"{quantite} unité(s) de {unite} mg" for unite, quantite in decomposition.items() if quantite > 0]
+    )
+else:
+    decomposition_text = "Décomposition impossible pour ce médicament."
+    st.warning(decomposition_text)
+st.write(decomposition_text)
+# Autres saisies
 patient_data["Duree"] = st.number_input("Durée (jours)", min_value=0)
 patient_data["Rythme_de_Delivrance"] = st.number_input("Rythme de délivrance (jours)", min_value=0)
 patient_data["Lieu_de_Delivrance"] = st.text_input("Lieu de délivrance")
 patient_data["Chevauchement_Autorise"] = st.selectbox("Chevauchement autorisé", ["Oui", "Non"], index=1)
+
+# Décomposition automatique de la posologie
+decomposition = decomposer_posologie(patient_data["Medicament"], patient_data["Posologie"])
+
+# Affichage de la décomposition avec possibilité de modification
+st.subheader("Décomposition de la posologie")
+
+if decomposition:
+    for unite, quantite in decomposition.items():
+        nouvelle_valeur = st.number_input(
+            f"{quantite} unité(s) de {unite} mg", 
+            min_value=0, 
+            value=quantite, 
+            step=1
+        )
+        decomposition[unite] = nouvelle_valeur  # Mise à jour si l'utilisateur modifie
+
+    # Convertir la décomposition en texte pour affichage sur PDF
+    decomposition_text = "Soit : " + ", ".join(
+        [f"{quantite} unité(s) de {unite} mg" for unite, quantite in decomposition.items() if quantite > 0]
+    )
+else:
+    decomposition_text = "Décomposition impossible pour ce médicament."
+    st.warning(decomposition_text)
+
+st.write(decomposition_text)
 if st.button("Générer l'ordonnance PDF"):
     # Initialiser le document PDF avant toute action
     pdf = FPDF()
@@ -209,12 +288,12 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.cell(0, 5, date_complete, ln=True, align="R")
 # Ecrire le infos patient sur le PDF
     pdf.cell(0, 10, txt=f"{patient_data['Civilite']} {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="R")
-    pdf.set_y(pdf.get_y()-1)  # Réduit l'espacement
+    pdf.set_y(pdf.get_y()-2)  # Réduit l'espacement
     pdf.set_font("Arial", 'I', 9)
     pdf.cell(0, 5, f"Né(e) le : {date_naissance} (Âge: {age})", ln=True, align="R")
 # Numéro de sécurité sociale si saisi
     if patient_data["Numero_Securite_Sociale"] and cle_secu is not None:
-        pdf.set_font("Arial", '', 10)  # Texte standard
+        pdf.set_font("Arial", '', 9)  # Texte standard
         pdf.cell(0, 5, f"N° Sécurité Sociale : {num_secu_formatte} - Clé : {cle_secu:02d}", ln=True, align="R")
 # Ajouter les informations de l'ordonnance
     pdf.set_font("Arial", 'B', 10)
