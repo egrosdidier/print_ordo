@@ -141,7 +141,7 @@ if st.button("Générer l'ordonnance PDF"):
 # Ecrire la date sur le PDF 
     pdf.cell(0, 5, date_complete, ln=True, align="R")
 # Ecrire le infos patient sur le PDF
-    pdf.cell(0, 5, txt=f"{patient_data['Civilite']} {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="R")
+    pdf.cell(0, 10, txt=f"{patient_data['Civilite']} {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="R")
     pdf.set_y(pdf.get_y())  # Réduit l'espacement
     pdf.set_font("Arial", 'I', 9)
     pdf.cell(0, 5, f"Né(e) le : {date_naissance} (Âge: {age})", ln=True, align="R")
