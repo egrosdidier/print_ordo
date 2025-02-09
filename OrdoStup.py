@@ -269,6 +269,10 @@ else:
 # Vérification pour affichage dans le PDF
 decomposition_finale = decomposition_modifiee if decomposition_modifiee else decomposition
 decomposition_finale = {unite: quantite for unite, quantite in decomposition_finale.items() if quantite > 0}
+# Saisies suivantes
+patient_data["Duree"] = st.number_input("Durée du traitement (jours)", min_value=1, step=1)
+patient_data["Rythme_de_Delivrance"] = st.number_input("Rythme de délivrance (jours)", min_value=1, step=1)
+
 
 if st.button("Générer l'ordonnance PDF"):
     # Initialiser le document PDF avant toute action
@@ -342,12 +346,7 @@ if st.button("Générer l'ordonnance PDF"):
 # Ajouter les informations de l'ordonnance
     pdf.set_font("Arial", 'B', 10)
     pdf.cell(0, 5, f"{patient_data['Medicament']} : {num2words(patient_data['Posologie'], lang='fr')} milligrammes par jour", ln=True, align="L")
-    pdf.set_font("Arial", '', 10)
-    pdf.cell(0, 5, txt=f"Pendant : {patient_data.get('Duree', 'Non spécifiée')} jours", ln=True, align="L")
-    pdf.set_font("Arial", '', 10)  # Texte standard
-    pdf.set_font("Arial", '', 10)  # Texte standard
-
-# Vérifier si la décomposition a été modifiée ou non
+  # Vérifier si la décomposition a été modifiée ou non
     decomposition_finale = decomposition_modifiee if decomposition_modifiee else decomposition
 
 # Supprimer les unités de quantité 0 pour l'affichage dans le PDF
@@ -361,7 +360,10 @@ if st.button("Générer l'ordonnance PDF"):
             pdf.cell(0, 5, f"- {quantite_text} {unite_nom} de {num2words(unite, lang='fr')} milligrammes", ln=True, align="L")
     else:
         pdf.cell(0, 5, "Décomposition impossible pour ce médicament.", ln=True, align="L")
-    pdf.cell(0, 5, txt=f"Rythme de délivrance: Tous les {patient_data.get('Rythme_de_Delivrance', 'Non spécifié')} jours", ln=True, align="L")
+    pdf.set_font("Arial", '', 10)
+	pdf.cell(0, 5, f"Pendant : {num2words(patient_data['Duree'], lang='fr')} jours", ln=True, align="L")    pdf.set_font("Arial", '', 10)  # Texte standard
+    pdf.set_font("Arial", '', 10)  # Texte standard
+    pdf.cell(0, 5, f"A délivrer tous les {num2words(patient_data['Rythme_de_Delivrance'], lang='fr')} jours", ln=True, align="L")
     pdf.cell(0, 10, txt=f"Lieu de délivrance: {patient_data.get('Lieu_de_Delivrance', 'Non spécifié')}", ln=True, align="L")
     pdf.cell(0, 5, txt=f"Chevauchement autorisé: {patient_data.get('Chevauchement_Autorise', 'Non spécifié')}", ln=True, align="L")
 # Buffer
