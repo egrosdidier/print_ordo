@@ -113,7 +113,7 @@ if st.button("Générer l'ordonnance PDF"):
             st.warning("Erreur lors du chargement du logo : fichier invalide.")
 
     # pdf defini
-    pdf.set_xy(10, 50)  # ✅ Plus d'erreur ici
+    pdf.set_xy(10, 50) 
     pdf.set_font("Arial", 'B', 10)
     pdf.cell(0, 5, preferences["structure"], ln=True, align="L")
     pdf.set_x(10)  # Réaligner l'adresse à gauche
@@ -150,7 +150,7 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.cell(0, 20, txt=f"{patient_data['Civilite']} {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="R")
    
 # Ajouter la date de naissance et l'âge sous le nom du patient
-    pdf.set_xy(10, pdf.get_y() + 5)
+    pdf.set_xy(10, pdf.get_y())
     pdf.set_font("Arial", '', 10)
 
 # Vérification et formatage de la date de naissance
