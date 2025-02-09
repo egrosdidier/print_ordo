@@ -86,7 +86,7 @@ medicament_options = [
 selected_medicament = st.selectbox("Médicament", medicament_options)
 if selected_medicament == "(Champ libre)":
     selected_medicament = st.text_input("Entrez le médicament")
-patient_data["Medicament"] = selected_medicament
+    patient_data["Medicament"] = selected_medicament
 
 patient_data["Posologie"] = st.number_input("Posologie (mg/jour)", min_value=0)
 patient_data["Duree"] = st.number_input("Durée (jours)", min_value=0)
@@ -95,12 +95,12 @@ patient_data["Lieu_de_Delivrance"] = st.text_input("Lieu de délivrance")
 patient_data["Chevauchement_Autorise"] = st.selectbox("Chevauchement autorisé", ["Oui", "Non"], index=1)
 
 if st.button("Générer l'ordonnance PDF"):
-pdf = FPDF()
-pdf.add_page()
-pdf.set_xy(10, 50)
-pdf.set_left_margin(preferences["marges"]["gauche"])
-pdf.set_right_margin(preferences["marges"]["droite"])
-pdf.set_top_margin(preferences["marges"]["haut"])
+    pdf = FPDF() 
+    pdf.add_page()
+    pdf.set_xy(10, 50)
+    pdf.set_left_margin(preferences["marges"]["gauche"])
+    pdf.set_right_margin(preferences["marges"]["droite"])
+    pdf.set_top_margin(preferences["marges"]["haut"])
     
 if preferences.get("logo") and os.path.exists(preferences["logo"]):
     try:
