@@ -143,12 +143,22 @@ if st.button("Générer l'ordonnance PDF"):
     
     pdf.cell(0, 20, txt=f"{patient_data['Civilite']} {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="R")
    
-    # Ajouter la date de naissance et l'âge sous le nom du patient
-    pdf.set_xy(10, pdf.get_y() + 5)
-    pdf.set_font("Arial", '', 10)
-    date_naissance = patient_data["Date_de_Naissance"].strftime("%d/%m/%Y") if patient_data["Date_de_Naissance"] else "Non renseignée"
-    pdf.cell(0, 5, f"Date de naissance : {date_naissance} (Âge: {age})", ln=True, align="L")
-    
+   # Ajouter la date de naissance et l'âge sous le nom du patient
+pdf.set_xy(10, pdf.get_y() + 5)
+pdf.set_font("Arial", '', 10)
+
+# Vérification et formatage de la date de naissance
+if patient_data["Date_de_Naissance"]:
+    date_naissance = patient_data["Date_de_Naissance"].strftime("%d/%m/%Y")
+    today = datetime.date.today()
+    birth_date = patient_data["Date_de_Naissance"]
+    age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+else:
+    date_naissance = "Non renseignée"
+    age = "Non renseigné"
+
+# Écrire sur le PDF
+pdf.cell(0, 5, f"Date de naissance : {date_naissance} (Âge: {age})", ln=True, align="L")
     buffer = io.BytesIO()
     buffer.write(pdf.output(dest="S").encode("latin1"))
     buffer.seek(0)
