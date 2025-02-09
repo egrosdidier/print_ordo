@@ -67,8 +67,9 @@ patient_data = {
     "Nom": st.text_input("Nom du patient", value="NOM"),
     "Prenom": st.text_input("Prénom du patient", value="Prénom"),
     "Date_de_Naissance": st.date_input("Date de naissance", value=None, format="DD/MM/YYYY"),
-  import re
 }
+# Numéro secu
+import re
 def generer_num_secu_base(civilite, date_naissance):
     """Génère les 6 premiers chiffres du numéro de Sécurité Sociale."""
     if not date_naissance:
@@ -80,8 +81,11 @@ def generer_num_secu_base(civilite, date_naissance):
 
     return f"{sexe}{annee}{mois}"  # Retourne 6 premiers chiffres
 
-# Générer les 6 premiers chiffres par défaut
-num_secu_base = generer_num_secu_base(patient_data["Civilite"], patient_data["Date_de_Naissance"])
+# Vérifier que les données du patient existent avant d'appeler la fonction
+if "Civilite" in patient_data and "Date_de_Naissance" in patient_data:
+    num_secu_base = generer_num_secu_base(patient_data["Civilite"], patient_data["Date_de_Naissance"])
+else:
+    num_secu_base = ""
 
 # Permettre à l'utilisateur de modifier les 6 premiers chiffres
 num_secu_base = st.text_input(
@@ -90,6 +94,11 @@ num_secu_base = st.text_input(
     max_chars=6,
     help="Les 6 premiers chiffres sont : Sexe (1/2) + Année (2 derniers chiffres) + Mois (2 chiffres)"
 )
+
+# Vérification de la validité de la saisie
+if not re.fullmatch(r"\d{6}", num_secu_base):
+    st.error("Les 6 premiers chiffres doivent contenir exactement 6 chiffres.")
+
 # Champ de saisie pour compléter les 7 derniers chiffres
 reste_num_secu = st.text_input(
     "Complétez avec les 7 derniers chiffres", 
@@ -97,6 +106,7 @@ reste_num_secu = st.text_input(
     max_chars=7,
     help="Entrez les 7 derniers chiffres de votre N° SS"
 )
+
 # Vérification et assemblage du numéro complet
 if re.fullmatch(r"\d{6}", num_secu_base) and re.fullmatch(r"\d{7}", reste_num_secu):
     patient_data["Numero_Securite_Sociale"] = num_secu_base + reste_num_secu
