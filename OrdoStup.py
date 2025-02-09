@@ -344,8 +344,8 @@ if st.button("Générer l'ordonnance PDF"):
         pdf.set_font("Arial", '', 10)  # Texte standard
         pdf.cell(0, 5, f"N° Sécurité Sociale : {num_secu_formatte} - Clé : {cle_secu:02d}", ln=True, align="R")
 # Ajouter les informations de l'ordonnance
-    pdf.set_font("Arial", 'B', 15)
-    pdf.cell(0, 5, f"{patient_data['Medicament']} : {num2words(patient_data['Posologie'], lang='fr')} milligrammes par jour", ln=True, align="L")
+    pdf.set_font("Arial", 'B', 10)
+    pdf.cell(0, 10, f"{patient_data['Medicament']} : {num2words(patient_data['Posologie'], lang='fr')} milligrammes par jour", ln=True, align="L")
   # Vérifier si la décomposition a été modifiée ou non
     decomposition_finale = decomposition_modifiee if decomposition_modifiee else decomposition
 
