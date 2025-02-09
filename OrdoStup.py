@@ -74,7 +74,15 @@ patient_data = {
     "Civilite": st.selectbox("Civilité", ["Madame", "Monsieur"], index=1),
     "Nom": st.text_input("Nom du patient"),
     "Prenom": st.text_input("Prénom du patient"),
-    "Date_de_Naissance": st.date_input("Date de naissance", value=None, format="DD/MM/YYYY"),
+    "Date_de_Naissance": st.date_input("Date de naissance", value=None, format="DD/MM/YYYY")
+    
+    # Calcul de l'âge si une date est saisie
+    age = None
+    if patient_data["Date_de_Naissance"]:
+        today = datetime.date.today()
+        birth_date = patient_data["Date_de_Naissance"]
+        age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+        st.write(f"Âge: {age} ans"),
 }
 
 # Liste déroulante des médicaments
@@ -133,7 +141,7 @@ if st.button("Générer l'ordonnance PDF"):
     mois_fr = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
     maintenant = datetime.datetime.now()
     jour_lettres = num2words(maintenant.day, lang='fr')
-    jour_semaine = jours_fr[maintenant.weekday()] 
+    jour_semaine = jours_fr[maintenant.weekday()]
     mois_lettres = mois_fr[maintenant.month - 1]
     date_complete = f"{jour_semaine} {jour_lettres} {mois_lettres} {maintenant.year}"
     
@@ -143,6 +151,23 @@ if st.button("Générer l'ordonnance PDF"):
     
     pdf.cell(0, 20, txt=f"{patient_data['Civilite']} {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="R")
 
+    # Positionner le texte sous le nom du patient
+    pdf.set_xy(10, pdf.get_y() + 5)  # Se place 5 mm sous la ligne précédente
+    pdf.set_font("Arial", '', 10)
+
+    # Formatage de la date de naissance en format jour/mois/année
+    date_naissance = patient_data["Date_de_Naissance"].strftime("%d/%m/%Y") if patient_data["Date_de_Naissance"] else "Non renseignée"
+
+    # Calcul de l'âge
+    if patient_data["Date_de_Naissance"]:
+      today = datetime.date.today()
+      birth_date = patient_data["Date_de_Naissance"]
+      age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+      pdf.cell(0, 5, f"Date de naissance : {date_naissance} (Âge: {age} ans)", ln=True, align="L")
+    else:
+      pdf.cell(0, 5, "Date de naissance : Non renseignée", ln=True, align="L")
+
+  
     # Ajouter les informations de l'ordonnance
     pdf.set_font("Arial", 'B', 10)
     pdf.cell(0, 5, txt=f"Médicament: {patient_data['Medicament']}", ln=True, align="L")
