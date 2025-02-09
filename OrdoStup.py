@@ -120,7 +120,6 @@ cle_secu = calculer_cle_securite_sociale(patient_data["Numero_Securite_Sociale"]
 # Affichage du numéro formaté et de la clé de contrôle
 if cle_secu is not None:
     st.success(f"N° SS : {patient_data['Numero_Securite_Sociale']} - Clé : {cle_secu:02d}")
-)
 }
 # Liste déroulante des médicaments
 medicament_options = [
