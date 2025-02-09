@@ -152,7 +152,7 @@ pdf.set_xy(10, pdf.get_y() + 5)
 pdf.set_font("Arial", '', 10)
 
 # Vérification et formatage de la date de naissance
-if patient_data["Date_de_Naissance"]:
+if patient_data["Date_de_Naissance"]: 
     date_naissance = patient_data["Date_de_Naissance"].strftime("%d/%m/%Y")
     today = datetime.date.today()
     birth_date = patient_data["Date_de_Naissance"]
