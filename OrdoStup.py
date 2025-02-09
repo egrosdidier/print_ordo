@@ -68,6 +68,23 @@ patient_data = {
     "Prenom": st.text_input("Prénom du patient", value="Prénom"),
     "Date_de_Naissance": st.date_input("Date de naissance", value=None, format="DD/MM/YYYY"),
 }
+from datetime import date
+
+def calculer_age(date_naissance):
+    """Calcule l'âge à partir de la date de naissance."""
+    if date_naissance:
+        today = date.today()
+        age = today.year - date_naissance.year - ((today.month, today.day) < (date_naissance.month, date_naissance.day))
+        return age
+    return None  # Si la date est vide
+
+# Calcul de l'âge si une date est saisie
+age_patient = calculer_age(patient_data["Date_de_Naissance"])
+
+# Affichage de l'âge sous la date de naissance
+if age_patient is not None:
+    st.info(f"Âge du patient : {age_patient} ans")
+
 # Numéro sécurité sociale
 import re
 
