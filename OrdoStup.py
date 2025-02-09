@@ -135,15 +135,7 @@ if st.button("Générer l'ordonnance PDF"):
     
     pdf.cell(0, 20, txt=f"{patient_data['Civilite']} {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="R")
 
-    # Ajouter les informations de l'ordonnance
-    pdf.set_font("Arial", 'B', 10)
-    pdf.cell(0, 5, txt=f"Médicament: {patient_data['Medicament']}", ln=True, align="L")
-    pdf.set_font("Arial", '', 10)
-    pdf.cell(0, 5, txt=f"Posologie: {patient_data['Posologie']} mg/j", ln=True, align="L")
-    pdf.cell(0, 5, txt=f"Durée: {patient_data['Duree']} jours", ln=True, align="L")
-    pdf.cell(0, 5, txt=f"Rythme de délivrance: Tous les {patient_data['Rythme_de_Delivrance']} jours", ln=True, align="L")
-    pdf.cell(0, 10, txt=f"Lieu de délivrance: {patient_data['Lieu_de_Delivrance']}", ln=True, align="L")
-    pdf.cell(0, 5, txt=f"Chevauchement autorisé: {patient_data['Chevauchement_Autorise']}", ln=True, align="L")
+
   
     buffer = io.BytesIO()
     buffer.write(pdf.output(dest="S").encode("latin1"))
