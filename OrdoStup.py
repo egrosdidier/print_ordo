@@ -206,31 +206,6 @@ patient_data["Rythme_de_Delivrance"] = st.number_input("Rythme de délivrance (j
 patient_data["Lieu_de_Delivrance"] = st.text_input("Lieu de délivrance")
 patient_data["Chevauchement_Autorise"] = st.selectbox("Chevauchement autorisé", ["Oui", "Non"], index=1)
 
-# Décomposition automatique de la posologie
-decomposition = decomposer_posologie(patient_data["Medicament"], patient_data["Posologie"])
-
-# Affichage de la décomposition avec possibilité de modification
-st.subheader("Décomposition de la posologie")
-
-if decomposition:
-    for unite, quantite in decomposition.items():
-        nouvelle_valeur = st.number_input(
-            f"{quantite} unité(s) de {unite} mg", 
-            min_value=0, 
-            value=quantite, 
-            step=1
-        )
-        decomposition[unite] = nouvelle_valeur  # Mise à jour si l'utilisateur modifie
-
-    # Convertir la décomposition en texte pour affichage sur PDF
-    decomposition_text = "Soit : " + ", ".join(
-        [f"{quantite} unité(s) de {unite} mg" for unite, quantite in decomposition.items() if quantite > 0]
-    )
-else:
-    decomposition_text = "Décomposition impossible pour ce médicament."
-    st.warning(decomposition_text)
-
-st.write(decomposition_text)
 if st.button("Générer l'ordonnance PDF"):
     # Initialiser le document PDF avant toute action
     pdf = FPDF()
