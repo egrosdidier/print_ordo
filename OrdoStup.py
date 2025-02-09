@@ -143,7 +143,7 @@ if st.button("Générer l'ordonnance PDF"):
     
     pdf.cell(0, 20, txt=f"{patient_data['Civilite']} {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="R")
    
-    # Ajouter la date de naissance et l'âge sous le nom du patient 
+    # Ajouter la date de naissance et l'âge sous le nom du patient
     pdf.set_xy(10, pdf.get_y() + 5)
     pdf.set_font("Arial", '', 10)
     date_naissance = patient_data["Date_de_Naissance"].strftime("%d/%m/%Y") if patient_data["Date_de_Naissance"] else "Non renseignée"
