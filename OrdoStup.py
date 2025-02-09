@@ -343,7 +343,7 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.set_font("Arial", 'B', 10)
     pdf.cell(0, 5, f"{patient_data['Medicament']} : {num2words(patient_data['Posologie'], lang='fr')} milligrammes par jour", ln=True, align="L")
     pdf.set_font("Arial", '', 10)
-    pdf.cell(0, 5, txt=f"Posologie: {patient_data.get('Posologie', 'Non spécifiée')} mg/j", ln=True, align="L")
+    pdf.cell(0, 5, txt=f"Pendant : {patient_data.get('Duree', 'Non spécifiée')} jours", ln=True, align="L")
     pdf.set_font("Arial", '', 10)  # Texte standard
     pdf.set_font("Arial", '', 10)  # Texte standard
 
@@ -361,7 +361,6 @@ if st.button("Générer l'ordonnance PDF"):
             pdf.cell(0, 5, f"- {quantite_text} {unite_nom} de {num2words(unite, lang='fr')} milligrammes", ln=True, align="L")
     else:
         pdf.cell(0, 5, "Décomposition impossible pour ce médicament.", ln=True, align="L")
-    pdf.cell(0, 5, txt=f"Durée: {patient_data.get('Duree', 'Non spécifiée')} jours", ln=True, align="L")
     pdf.cell(0, 5, txt=f"Rythme de délivrance: Tous les {patient_data.get('Rythme_de_Delivrance', 'Non spécifié')} jours", ln=True, align="L")
     pdf.cell(0, 10, txt=f"Lieu de délivrance: {patient_data.get('Lieu_de_Delivrance', 'Non spécifié')}", ln=True, align="L")
     pdf.cell(0, 5, txt=f"Chevauchement autorisé: {patient_data.get('Chevauchement_Autorise', 'Non spécifié')}", ln=True, align="L")
