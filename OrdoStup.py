@@ -81,6 +81,13 @@ def generer_num_secu_base(civilite, date_naissance):
     mois = f"{date_naissance.month:02d}"  # Mois sur 2 chiffres
     return f"{sexe}{annee}{mois}"  # Retourne 5 premiers chiffres
 
+def formater_num_secu(numero):
+    """Ajoute des espaces au format 0 00 00 00 000 000."""
+    numero = re.sub(r"[^0-9]", "", numero)  # Supprime les caractères non numériques
+    if len(numero) == 13:  # Vérifie que le numéro est bien valide
+        return f"{numero[0]} {numero[1:3]} {numero[3:5]} {numero[5:7]} {numero[7:10]} {numero[10:13]}"
+    return numero  # Retourne tel quel si le format est incorrect
+
 # Fonction pour calculer la clé de Sécurité Sociale
 def calculer_cle_securite_sociale(numero):
     """Calcule la clé de contrôle pour un numéro de Sécurité Sociale."""
@@ -102,14 +109,15 @@ num_secu_complet = st.text_input(
 
 # Vérification si 13 chiffres sont bien saisis
 cle_secu = None  # Valeur par défaut avant validation complète
+num_secu_formatte = ""  # Initialisation
 if len(num_secu_complet) == 13 and re.fullmatch(r"\d{13}", num_secu_complet):
     patient_data["Numero_Securite_Sociale"] = num_secu_complet
     cle_secu = calculer_cle_securite_sociale(patient_data["Numero_Securite_Sociale"])
+    num_secu_formatte = formater_num_secu(patient_data["Numero_Securite_Sociale"])  # Formate le numéro
 
-# Affichage de la clé de contrôle uniquement si le numéro est complet
+# Affichage du numéro formaté et de la clé de contrôle uniquement si complet
 if cle_secu is not None:
-    st.success(f"N° SS : {patient_data['Numero_Securite_Sociale']} - Clé : {cle_secu:02d}")
-
+    st.success(f"N° SS : {num_secu_formatte} - Clé : {cle_secu:02d}")
 # Liste déroulante des médicaments
 medicament_options = [
     "METHADONE GELULES", "METHADONE SIROP", "BUPRENORPHINE HD", "SUBUTEX", "OROBUPRE",
