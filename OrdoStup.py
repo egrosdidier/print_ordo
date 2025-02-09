@@ -74,7 +74,7 @@ patient_data = {
     "Civilite": st.selectbox("Civilité", ["Madame", "Monsieur"], index=1),
     "Nom": st.text_input("Nom du patient"),
     "Prenom": st.text_input("Prénom du patient"),
-    "Date_de_Naissance": st.date_input("Date de naissance", value=None, format="DD/MM/YYYY")
+    "Date_de_Naissance": st.date_input("Date de naissance", value=None, format="DD/MM/YYYY"),
     
     # Calcul de l'âge si une date est saisie
     age = None
