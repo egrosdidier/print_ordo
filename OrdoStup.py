@@ -71,63 +71,37 @@ patient_data = {
 # Numéro secu
 import re
 def generer_num_secu_base(civilite, date_naissance):
-    """Génère les 6 premiers chiffres du numéro de Sécurité Sociale."""
+    """Génère les 5 premiers chiffres du numéro de Sécurité Sociale."""
     if not date_naissance:
         return ""  # Pas de génération sans date
     
     sexe = "1" if civilite == "Monsieur" else "2"
     annee = f"{date_naissance.year % 100:02d}"  # Année sur 2 chiffres
     mois = f"{date_naissance.month:02d}"  # Mois sur 2 chiffres
+    return f"{sexe}{annee}{mois}"  # Retourne 5 premiers chiffres
 
-    return f"{sexe}{annee}{mois}"  # Retourne 6 premiers chiffres
+# Générer les 5 premiers chiffres par défaut
+num_secu_base = generer_num_secu_base(patient_data["Civilite"], patient_data["Date_de_Naissance"])
 
-# Vérifier que les données du patient existent avant d'appeler la fonction
-if "Civilite" in patient_data and "Date_de_Naissance" in patient_data:
-    num_secu_base = generer_num_secu_base(patient_data["Civilite"], patient_data["Date_de_Naissance"])
-else:
-    num_secu_base = ""
-
-# Permettre à l'utilisateur de modifier les 6 premiers chiffres
-num_secu_base = st.text_input(
-    "Premiers chiffres du Numéro de Sécurité Sociale (modifiable)", 
+# Champ de saisie pour entrer/modifier les 13 chiffres du N° SS
+num_secu_complet = st.text_input(
+    "Numéro de Sécurité Sociale (13 chiffres)", 
     value=num_secu_base, 
-    max_chars=6,
-    help="Les 6 premiers chiffres sont : Sexe (1/2) + Année (2 derniers chiffres) + Mois (2 chiffres)"
+    max_chars=13,
+    help="Les 5 premiers chiffres sont pré-remplis : Sexe (1/2) + Année (2 derniers chiffres) + Mois (2 chiffres). Complétez les 8 autres."
 )
 
-# Vérification de la validité de la saisie
-if not re.fullmatch(r"\d{6}", num_secu_base):
-    st.error("Les 6 premiers chiffres doivent contenir exactement 6 chiffres.")
-
-# Champ de saisie pour compléter les 7 derniers chiffres
-reste_num_secu = st.text_input(
-    "Complétez avec les 7 derniers chiffres", 
-    value="",
-    max_chars=7,
-    help="Entrez les 7 derniers chiffres de votre N° SS"
-)
-
-# Vérification et assemblage du numéro complet
-if re.fullmatch(r"\d{6}", num_secu_base) and re.fullmatch(r"\d{7}", reste_num_secu):
-    patient_data["Numero_Securite_Sociale"] = num_secu_base + reste_num_secu
-else:
+# Vérification que le numéro contient bien 13 chiffres
+if not re.fullmatch(r"\d{13}", num_secu_complet):
+    st.error("Le numéro de Sécurité Sociale doit contenir exactement 13 chiffres.")
     patient_data["Numero_Securite_Sociale"] = ""
-    st.error("Le numéro doit contenir exactement 13 chiffres (6 + 7).")
-
-# Fonction pour calculer la clé de Sécurité Sociale
-def calculer_cle_securite_sociale(numero):
-    """Calcule la clé de contrôle pour un numéro de Sécurité Sociale."""
-    numero = re.sub(r"[^0-9]", "", numero)  # Supprime les espaces et caractères non numériques
-    if len(numero) == 13 and numero.isdigit():
-        return 97 - (int(numero) % 97)
-    return None
-
-# Calcul automatique de la clé
-cle_secu = calculer_cle_securite_sociale(patient_data["Numero_Securite_Sociale"])
+else:
+    patient_data["Numero_Securite_Sociale"] = num_secu_complet
 
 # Affichage du numéro formaté et de la clé de contrôle
 if cle_secu is not None:
     st.success(f"N° SS : {patient_data['Numero_Securite_Sociale']} - Clé : {cle_secu:02d}")
+
 # Liste déroulante des médicaments
 medicament_options = [
     "METHADONE GELULES", "METHADONE SIROP", "BUPRENORPHINE HD", "SUBUTEX", "OROBUPRE",
