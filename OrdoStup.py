@@ -1,4 +1,4 @@
-import streamlit as st
+  import streamlit as st
 import json
 import io
 import os
@@ -163,16 +163,16 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.cell(0, 5, f"Date de naissance : {date_naissance} (Âge: {age})", ln=True, align="L")
 
 # Ajouter les informations de l'ordonnance
-pdf.set_font("Arial", 'B', 10)
-pdf.cell(0, 5, txt=f"Médicament: {patient_data['Medicament']}", ln=True, align="L")
-pdf.set_font("Arial", '', 10)
-pdf.cell(0, 5, txt=f"Posologie: {patient_data['Posologie']} mg/j", ln=True, align="L")
-pdf.cell(0, 5, txt=f"Durée: {patient_data['Duree']} jours", ln=True, align="L")
-pdf.cell(0, 5, txt=f"Rythme de délivrance: Tous les {patient_data['Rythme_de_Delivrance']} jours", ln=True, align="L")
-pdf.cell(0, 10, txt=f"Lieu de délivrance: {patient_data['Lieu_de_Delivrance']}", ln=True, align="L")
-pdf.cell(0, 5, txt=f"Chevauchement autorisé: {patient_data['Chevauchement_Autorise']}", ln=True, align="L")
+    pdf.set_font("Arial", 'B', 10)
+    pdf.cell(0, 5, txt=f"Médicament: {patient_data['Medicament']}", ln=True, align="L")
+    pdf.set_font("Arial", '', 10)
+    pdf.cell(0, 5, txt=f"Posologie: {patient_data['Posologie']} mg/j", ln=True, align="L")
+    pdf.cell(0, 5, txt=f"Durée: {patient_data['Duree']} jours", ln=True, align="L")
+    pdf.cell(0, 5, txt=f"Rythme de délivrance: Tous les {patient_data['Rythme_de_Delivrance']} jours", ln=True, align="L")
+    pdf.cell(0, 10, txt=f"Lieu de délivrance: {patient_data['Lieu_de_Delivrance']}", ln=True, align="L")
+    pdf.cell(0, 5, txt=f"Chevauchement autorisé: {patient_data['Chevauchement_Autorise']}", ln=True, align="L")
   
-buffer = io.BytesIO()
-buffer.write(pdf.output(dest="S").encode("latin1"))
-buffer.seek(0)
-st.download_button("Télécharger l'ordonnance", buffer, "ordonnance.pdf", "application/pdf")
+    buffer = io.BytesIO()
+    buffer.write(pdf.output(dest="S").encode("latin1"))
+    buffer.seek(0)
+    st.download_button("Télécharger l'ordonnance", buffer, "ordonnance.pdf", "application/pdf")
