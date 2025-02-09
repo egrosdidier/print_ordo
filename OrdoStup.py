@@ -55,6 +55,7 @@ if logo_uploaded:
     preferences["logo"] = defaut_logo_path
 else:
     preferences["logo"] = preferences.get("logo", None)
+
 if st.sidebar.button("Sauvegarder les préférences"):
     sauvegarder_preferences_utilisateur(preferences)
     st.sidebar.success("Préférences enregistrées avec succès !")
@@ -97,7 +98,6 @@ if st.button("Générer l'ordonnance PDF"):
             pdf.image(preferences["logo"], x=10, y=10, w=40)
         except RuntimeError:
             st.warning("Erreur lors du chargement du logo : fichier invalide.")
-
     # pdf defini
     pdf.set_xy(10, 50)  # ✅ Plus d'erreur ici
     pdf.set_font("Arial", 'B', 10)
@@ -108,7 +108,7 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.set_x(10)  # Réaligner le FINESS à gauche
     pdf.set_font("Arial", '', 10)
     pdf.cell(0, 5, f"FINESS: {preferences['finess']}", ln=True, align="L")
-# Création bloc médecin    
+# Bloc identification médecin   
     pdf.set_xy(150, 50)
 # Écriture du nom du médecin en gras
     pdf.set_font("Arial", 'B', 10)
@@ -129,8 +129,6 @@ if st.button("Générer l'ordonnance PDF"):
 # Définir le pdf
     pdf.set_xy(150, 70)
     pdf.set_font("Arial", 'B', 10)
-    pdf.cell(0, 5, date_complete, ln=True, align="R")
-    pdf.cell(0, 20, txt=f"{patient_data['Civilite']} {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="R")
 # Vérification et formatage de la date de naissance
     if patient_data["Date_de_Naissance"]:
         date_naissance = patient_data["Date_de_Naissance"].strftime("%d/%m/%Y")
@@ -140,9 +138,12 @@ if st.button("Générer l'ordonnance PDF"):
     else:
         date_naissance = "Non renseignée"
         age = "Non renseigné"
-# Ecrire la date de naissance sur le PDF
-    pdf.set_font("Arial", '', 9)
-    pdf.cell(0, 5, f"Né(e) le : {date_naissance} (Âge: {age})", ln=True, align="R")
+# Ecrire la date sur le PDF 
+    pdf.cell(0, 5, date_complete, ln=True, align="R")
+# Ecrire le infos patient sur le PDF
+	pdf.cell(0, 5, txt=f"{patient_data['Civilite']} {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="R")
+	pdf.set_y(pdf.get_y() - 2)  # Réduit l'espacement
+	pdf.cell(0, 5, f"Né(e) le : {date_naissance} (Âge: {age})", ln=True, align="R")
 # Ajouter les informations de l'ordonnance
     pdf.set_font("Arial", 'B', 10)
     pdf.cell(0, 10, txt=f"Médicament: {patient_data.get('Medicament', 'Non spécifié')}", ln=True, align="L")
