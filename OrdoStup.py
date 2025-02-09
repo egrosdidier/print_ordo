@@ -75,14 +75,6 @@ patient_data = {
     "Nom": st.text_input("Nom du patient"),
     "Prenom": st.text_input("Prénom du patient"),
     "Date_de_Naissance": st.date_input("Date de naissance", value=None, format="DD/MM/YYYY"),
-    
-    # Calcul de l'âge si une date est saisie
-    age = None
-    if patient_data["Date_de_Naissance"]:
-        today = datetime.date.today()
-        birth_date = patient_data["Date_de_Naissance"]
-        age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
-        st.write(f"Âge: {age} ans"),
 }
 
 # Liste déroulante des médicaments
@@ -150,24 +142,17 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.cell(0, 5, date_complete, ln=True, align="R")
     
     pdf.cell(0, 20, txt=f"{patient_data['Civilite']} {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="R")
-
-    # Positionner le texte sous le nom du patient
-    pdf.set_xy(10, pdf.get_y() + 5)  # Se place 5 mm sous la ligne précédente
+   
+    # Ajouter la date de naissance et l'âge sous le nom du patient
+    pdf.set_xy(10, pdf.get_y() + 5)
     pdf.set_font("Arial", '', 10)
-
-    # Formatage de la date de naissance en format jour/mois/année
     date_naissance = patient_data["Date_de_Naissance"].strftime("%d/%m/%Y") if patient_data["Date_de_Naissance"] else "Non renseignée"
-
-    # Calcul de l'âge
-    if patient_data["Date_de_Naissance"]:
-      today = datetime.date.today()
-      birth_date = patient_data["Date_de_Naissance"]
-      age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
-      pdf.cell(0, 5, f"Date de naissance : {date_naissance} (Âge: {age} ans)", ln=True, align="L")
-    else:
-      pdf.cell(0, 5, "Date de naissance : Non renseignée", ln=True, align="L")
-
-  
+    pdf.cell(0, 5, f"Date de naissance : {date_naissance} (Âge: {age})", ln=True, align="L")
+    
+    buffer = io.BytesIO()
+    buffer.write(pdf.output(dest="S").encode("latin1"))
+    buffer.seek(0)
+    st.download_button("Télécharger l'ordonnance", buffer, "ordonnance.pdf", "application/pdf")
     # Ajouter les informations de l'ordonnance
     pdf.set_font("Arial", 'B', 10)
     pdf.cell(0, 5, txt=f"Médicament: {patient_data['Medicament']}", ln=True, align="L")
