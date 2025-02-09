@@ -49,6 +49,14 @@ def decomposer_posologie(medicament, dose_totale):
 
     return result  # Retourne un dictionnaire {unité: quantité}
 
+#Fonction posologie ne touyte lettre
+from num2words import num2words
+def posologie_en_toutes_lettres(posologie):
+    """Convertit une posologie en toutes lettres."""
+    if posologie > 0:
+        return num2words(posologie, lang='fr')
+    return "zéro"
+  
 # Charger les préférences utilisateur
 def charger_preferences_utilisateur():
     try:
@@ -297,9 +305,7 @@ if st.button("Générer l'ordonnance PDF"):
         pdf.cell(0, 5, f"N° Sécurité Sociale : {num_secu_formatte} - Clé : {cle_secu:02d}", ln=True, align="R")
 # Ajouter les informations de l'ordonnance
     pdf.set_font("Arial", 'B', 10)
-    pdf.cell(0, 10, txt=f"{patient_data.get('Medicament', 'Non spécifié')}", ln=True, align="L")
-    pdf.set_font("Arial", '', 10)
-    pdf.cell(0, 5, txt=f"Posologie: {patient_data.get('Posologie', 'Non spécifiée')} mg/j", ln=True, align="L")
+    pdf.cell(0, 5, f"{patient_data['Medicament']} {posologie_en_toutes_lettres(patient_data['Posologie'])} milligrammes", ln=True, align="L")    pdf.set_font("Arial", '', 10)
     pdf.cell(0, 5, txt=f"Durée: {patient_data.get('Duree', 'Non spécifiée')} jours", ln=True, align="L")
     pdf.cell(0, 5, txt=f"Rythme de délivrance: Tous les {patient_data.get('Rythme_de_Delivrance', 'Non spécifié')} jours", ln=True, align="L")
     pdf.cell(0, 10, txt=f"Lieu de délivrance: {patient_data.get('Lieu_de_Delivrance', 'Non spécifié')}", ln=True, align="L")
