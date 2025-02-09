@@ -283,8 +283,8 @@ if st.button("Générer l'ordonnance PDF"):
         pdf.set_font("Arial", '', 10)  # Texte standard
         pdf.cell(0, 5, f"N° Sécurité Sociale : {num_secu_formatte} - Clé : {cle_secu:02d}", ln=True, align="L")
 # Ajouter les informations de l'ordonnance
-    pdf.set_font("Arial", 'B', 10)  # Mettre en gras pour le médicament et la posologie
-    pdf.cell(0, 5, f"{patient_data['Medicament']} : {posologie_en_toutes_lettres(patient_data['Posologie'])} milligrammes par jou", ln=True, align="L")
+    pdf.set_font("Arial", 'B', 20)  # Mettre en gras pour le médicament et la posologie
+    pdf.cell(0, 5, f"{patient_data['Medicament']} : {posologie_en_toutes_lettres(patient_data['Posologie'])} milligrammes par jour", ln=True, align="L")
     pdf.set_font("Arial", '', 10)  # Remettre en normal après l'affichage
     pdf.cell(0, 5, txt=f"Durée: {patient_data.get('Duree', 'Non spécifiée')} jours", ln=True, align="L")
     pdf.cell(0, 5, txt=f"Rythme de délivrance: Tous les {patient_data.get('Rythme_de_Delivrance', 'Non spécifié')} jours", ln=True, align="L")
