@@ -165,7 +165,7 @@ if st.button("Générer l'ordonnance PDF"):
 
 # Ecrire la date de naissance sur le PDF
 	pdf.set_font("Arial", '', 10)
-    pdf.cell(0, 0, f"Né(e) le : {date_naissance} (Âge: {age})", ln=True, align="R")
+	pdf.cell(0, 5, f"Né(e) le : {date_naissance} (Âge: {age})", ln=True, align="R")
 
 # Ajouter les informations de l'ordonnance
     pdf.set_font("Arial", 'B', 10)
