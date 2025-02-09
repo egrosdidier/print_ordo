@@ -6,7 +6,6 @@ import datetime
 from fpdf import FPDF
 from PIL import Image
 from num2words import num2words
-
 # Définir les préférences par défaut
 defaut_preferences = {
     "structure": "Nom de la structure",
@@ -23,7 +22,6 @@ defaut_preferences = {
         "droite": 20
     }
 }
-
 # Charger les préférences utilisateur
 def charger_preferences_utilisateur():
     try:
@@ -31,15 +29,12 @@ def charger_preferences_utilisateur():
             return json.load(f)
     except FileNotFoundError:
         return defaut_preferences
-
 # Sauvegarder les préférences utilisateur
 def sauvegarder_preferences_utilisateur(preferences):
     with open("preferences.json", "w") as f:
         json.dump(preferences, f, indent=4)
-
 # Interface Streamlit
 st.title("Générateur d'ordonnances sécurisées")
-
 # Interface de saisie des préférences
 st.sidebar.header("Paramètres de la structure")
 preferences = charger_preferences_utilisateur()
@@ -49,7 +44,6 @@ preferences["finess"] = st.sidebar.text_input("Numéro FINESS", preferences["fin
 preferences["medecin"] = st.sidebar.text_input("Nom du médecin", preferences["medecin"])
 preferences["rpps"] = st.sidebar.text_input("Numéro RPPS", preferences["rpps"])
 preferences["coordonnees"] = st.sidebar.text_area("Coordonnées", preferences["coordonnees"])
-
 # Gestion du logo
 defaut_logo_path = "logo_structure.png"
 logo_uploaded = st.sidebar.file_uploader("Logo de la structure (PNG, JPG, JPEG)", type=["png", "jpg", "jpeg"])
@@ -61,14 +55,11 @@ if logo_uploaded:
     preferences["logo"] = defaut_logo_path
 else:
     preferences["logo"] = preferences.get("logo", None)
-
 if st.sidebar.button("Sauvegarder les préférences"):
     sauvegarder_preferences_utilisateur(preferences)
     st.sidebar.success("Préférences enregistrées avec succès !")
-
 # Interface de saisie de l'ordonnance
 st.header("Créer une ordonnance")
-
 # Saisie des informations du patient
 patient_data = {
     "Civilite": st.selectbox("Civilité", ["Madame", "Monsieur"], index=1),
@@ -76,20 +67,16 @@ patient_data = {
     "Prenom": st.text_input("Prénom du patient"),
     "Date_de_Naissance": st.date_input("Date de naissance", value=None, format="DD/MM/YYYY"),
 }
-
 # Liste déroulante des médicaments
 medicament_options = [
     "METHADONE GELULES", "METHADONE SIROP", "BUPRENORPHINE HD", "SUBUTEX", "OROBUPRE",
     "SUBOXONE", "METHYLPHENIDATE", "CONCERTA", "QUASYM", "RITATINE LP",
     "RITALINE LI", "MEDIKINET", "(Champ libre)"
 ]
-
 selected_medicament = st.selectbox("Médicament", medicament_options)
-
 # Si l'utilisateur choisit "(Champ libre)", lui permettre d'entrer un médicament
 if selected_medicament == "(Champ libre)":
     selected_medicament = st.text_input("Entrez le médicament")
-
 # Assigner correctement la valeur au dictionnaire patient_data
 patient_data["Medicament"] = selected_medicament if selected_medicament else "Non spécifié"
 patient_data["Posologie"] = st.number_input("Posologie (mg/jour)", min_value=0)
@@ -97,7 +84,6 @@ patient_data["Duree"] = st.number_input("Durée (jours)", min_value=0)
 patient_data["Rythme_de_Delivrance"] = st.number_input("Rythme de délivrance (jours)", min_value=0)
 patient_data["Lieu_de_Delivrance"] = st.text_input("Lieu de délivrance")
 patient_data["Chevauchement_Autorise"] = st.selectbox("Chevauchement autorisé", ["Oui", "Non"], index=1)
-
 if st.button("Générer l'ordonnance PDF"):
     # Initialiser le document PDF avant toute action
     pdf = FPDF()
@@ -122,17 +108,15 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.set_x(10)  # Réaligner le FINESS à gauche
     pdf.set_font("Arial", '', 10)
     pdf.cell(0, 5, f"FINESS: {preferences['finess']}", ln=True, align="L")
-      
+# Création bloc médecin    
     pdf.set_xy(150, 50)
-  # Écriture du nom du médecin en gras
+# Écriture du nom du médecin en gras
     pdf.set_font("Arial", 'B', 10)
     pdf.cell(0, 5, preferences['medecin'], ln=True, align="C")
-    
 # Écriture du RPPS en standard mais dans la même cellule
     pdf.set_font("Arial", '', 10)
     pdf.set_x(150)  # Remet l'alignement en X à la position précédente
     pdf.cell(0, 5, f"RPPS: {preferences['rpps']}", ln=True, align="C")
-    
 # Afficher la date en toutes lettres
     from num2words import num2words
     jours_fr = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"]
