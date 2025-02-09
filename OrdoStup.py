@@ -181,18 +181,17 @@ decomposition = decomposer_posologie(patient_data["Medicament"], patient_data["P
 
 # Affichage de la décomposition avec possibilité de modification
 st.subheader("Décomposition de la posologie")
-
 if decomposition:
     for unite, quantite in decomposition.items():
         nouvelle_valeur = st.number_input(
             f"{quantite} unité(s) de {unite} mg", 
             min_value=0, 
             value=quantite, 
-            step=1
+            step=1,
+            key=f"decomp_{unite}"  # ✅ Ajout d'un identifiant unique basé sur l'unité
         )
         decomposition[unite] = nouvelle_valeur  # Mise à jour si l'utilisateur modifie
-
-    # Convertir la décomposition en texte pour affichage sur PDF
+# Convertir la décomposition en texte pour affichage sur PDF
     decomposition_text = "Soit : " + ", ".join(
         [f"{quantite} unité(s) de {unite} mg" for unite, quantite in decomposition.items() if quantite > 0]
     )
@@ -200,6 +199,7 @@ else:
     decomposition_text = "Décomposition impossible pour ce médicament."
     st.warning(decomposition_text)
 st.write(decomposition_text)
+
 # Autres saisies
 patient_data["Duree"] = st.number_input("Durée (jours)", min_value=0)
 patient_data["Rythme_de_Delivrance"] = st.number_input("Rythme de délivrance (jours)", min_value=0)
