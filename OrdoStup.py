@@ -101,12 +101,13 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.set_right_margin(preferences["marges"]["droite"])
     pdf.set_top_margin(preferences["marges"]["haut"])
     
-    # Ajouter le logo et les informations de la structure
 if preferences.get("logo") and os.path.exists(preferences["logo"]):
     try:
-      pdf.image(preferences["logo"], x=10, y=10, w=40)
-    except RuntimeError:
-      st.warning("Le fichier logo est invalide. Vérifiez le format de l'image.")
+        pdf.image(preferences["logo"], x=10, y=10, w=40)
+    except Exception as e:
+        st.warning(f"Erreur lors du chargement du logo : {e}")
+else:
+    st.warning("Aucun logo trouvé. Assurez-vous d'en téléverser un dans les préférences.")
 
 # Écrire sur le PDF
 pdf.set_xy(10, 50)
