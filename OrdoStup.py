@@ -49,6 +49,23 @@ def decomposer_posologie(medicament, dose_totale):
 
     return result  # Retourne un dictionnaire {unité: quantité}
 
+# Définiton des unités de prise
+from num2words import num2words
+
+def formater_unite(medicament, quantite):
+    """Retourne la bonne unité (gélule, flacon, comprimé) avec l'accord en français."""
+    if medicament == "METHADONE GELULES":
+        unite_nom = "gélule" if quantite == 1 else "gélules"
+    elif medicament == "METHADONE SIROP":
+        unite_nom = "flacon" if quantite == 1 else "flacons"
+    else:  # Pour les comprimés (Buprénorphine HD, Subutex, Orobupré, etc.)
+        unite_nom = "comprimé" if quantite == 1 else "comprimés"
+
+    # Utiliser "une" au lieu de "un" devant gélule
+    quantite_text = "une" if quantite == 1 and unite_nom in ["gélule"] else num2words(quantite, lang='fr')
+
+    return quantite_text, unite_nom
+
 # Charger les préférences utilisateur
 def charger_preferences_utilisateur():
     try:
@@ -191,19 +208,15 @@ if decomposition:
             key=f"decomp_{unite}"  # ✅ Ajout d'un identifiant unique basé sur l'unité
         )
         decomposition[unite] = nouvelle_valeur  # Mise à jour si l'utilisateur modifie
+        
+
 # Convertir la décomposition en texte pour affichage sur PDF
     decomposition_text = "Soit : " + ", ".join(
         [f"{quantite} unité(s) de {unite} mg" for unite, quantite in decomposition.items() if quantite > 0]
     )
 else:
     decomposition_text = "Décomposition impossible pour ce médicament."
-  
-
-# Autres saisies
-patient_data["Duree"] = st.number_input("Durée (jours)", min_value=0)
-patient_data["Rythme_de_Delivrance"] = st.number_input("Rythme de délivrance (jours)", min_value=0)
-patient_data["Lieu_de_Delivrance"] = st.text_input("Lieu de délivrance")
-patient_data["Chevauchement_Autorise"] = st.selectbox("Chevauchement autorisé", ["Oui", "Non"], index=1)
+    st.warning(decomposition_text)
 
 st.write(decomposition_text)
 if st.button("Générer l'ordonnance PDF"):
@@ -277,7 +290,7 @@ if st.button("Générer l'ordonnance PDF"):
         pdf.cell(0, 5, f"N° Sécurité Sociale : {num_secu_formatte} - Clé : {cle_secu:02d}", ln=True, align="L")
 # Ajouter les informations de l'ordonnance
     pdf.set_font("Arial", 'B', 10)
-    pdf.cell(0, 10, txt=f"{patient_data.get('Medicament', 'Non spécifié')}", ln=True, align="L")
+    pdf.cell(0, 5, f"{patient_data['Medicament']} : {num2words(patient_data['Posologie'], lang='fr')} milligrammes par jour", ln=True, align="L")
     pdf.set_font("Arial", '', 10)
     pdf.cell(0, 5, txt=f"Posologie: {patient_data.get('Posologie', 'Non spécifiée')} mg/j", ln=True, align="L")
     pdf.set_font("Arial", '', 10)  # Texte standard
@@ -287,15 +300,7 @@ if st.button("Générer l'ordonnance PDF"):
         pdf.cell(0, 5, "Soit :", ln=True, align="L")  # Titre de la décomposition
         for unite, quantite in decomposition.items():
             if quantite > 0:  # N'afficher que les unités > 0
-                # Déterminer le type d'unité (gélule, flacon, comprimé)
-                if patient_data["Medicament"] == "METHADONE GELULES":
-                    unite_nom = "gélule" if quantite == 1 else "gélules"
-                elif patient_data["Medicament"] == "METHADONE SIROP":
-                    unite_nom = "flacon" if quantite == 1 else "flacons"
-                else:  # Pour les comprimés (Buprénorphine HD, Subutex, Orobupré, etc.)
-                    unite_nom = "comprimé" if quantite == 1 else "comprimés"
-                # Utiliser "une" au lieu de "un" devant gélule et flacon
-                quantite_text = "une" if quantite == 1 and unite_nom in ["gélule", "flacon"] else num2words(quantite, lang='fr')
+                quantite_text, unite_nom = formater_unite(patient_data["Medicament"], quantite)
                 pdf.cell(0, 5, f"- {quantite_text} {unite_nom} de {num2words(unite, lang='fr')} milligrammes", ln=True, align="L")
     else:
         pdf.cell(0, 5, "Décomposition impossible pour ce médicament.", ln=True, align="L")
