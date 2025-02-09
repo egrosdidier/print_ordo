@@ -61,12 +61,66 @@ if st.sidebar.button("Sauvegarder les préférences"):
     st.sidebar.success("Préférences enregistrées avec succès !")
 # Interface de saisie de l'ordonnance
 st.header("Créer une ordonnance")
-# Saisie des informations du patient
+# Saisie des informations du patient avec valeurs par défaut
 patient_data = {
     "Civilite": st.selectbox("Civilité", ["Madame", "Monsieur"], index=1),
-    "Nom": st.text_input("Nom du patient"),
-    "Prenom": st.text_input("Prénom du patient"),
+    "Nom": st.text_input("Nom du patient", value="NOM"),
+    "Prenom": st.text_input("Prénom du patient", value="Prénom"),
     "Date_de_Naissance": st.date_input("Date de naissance", value=None, format="DD/MM/YYYY"),
+  import re
+
+def generer_num_secu_base(civilite, date_naissance):
+    """Génère les 6 premiers chiffres du numéro de Sécurité Sociale."""
+    if not date_naissance:
+        return ""  # Pas de génération sans date
+    
+    sexe = "1" if civilite == "Monsieur" else "2"
+    annee = f"{date_naissance.year % 100:02d}"  # Année sur 2 chiffres
+    mois = f"{date_naissance.month:02d}"  # Mois sur 2 chiffres
+
+    return f"{sexe}{annee}{mois}"  # Retourne 6 premiers chiffres
+
+# Générer les 6 premiers chiffres par défaut
+num_secu_base = generer_num_secu_base(patient_data["Civilite"], patient_data["Date_de_Naissance"])
+
+# Permettre à l'utilisateur de modifier les 6 premiers chiffres
+num_secu_base = st.text_input(
+    "Premiers chiffres du Numéro de Sécurité Sociale (modifiable)", 
+    value=num_secu_base, 
+    max_chars=6,
+    help="Les 6 premiers chiffres sont : Sexe (1/2) + Année (2 derniers chiffres) + Mois (2 chiffres)"
+)
+
+# Champ de saisie pour compléter les 7 derniers chiffres
+reste_num_secu = st.text_input(
+    "Complétez avec les 7 derniers chiffres", 
+    value="",
+    max_chars=7,
+    help="Entrez les 7 derniers chiffres de votre N° SS"
+)
+
+# Vérification et assemblage du numéro complet
+if re.fullmatch(r"\d{6}", num_secu_base) and re.fullmatch(r"\d{7}", reste_num_secu):
+    patient_data["Numero_Securite_Sociale"] = num_secu_base + reste_num_secu
+else:
+    patient_data["Numero_Securite_Sociale"] = ""
+    st.error("Le numéro doit contenir exactement 13 chiffres (6 + 7).")
+
+# Fonction pour calculer la clé de Sécurité Sociale
+def calculer_cle_securite_sociale(numero):
+    """Calcule la clé de contrôle pour un numéro de Sécurité Sociale."""
+    numero = re.sub(r"[^0-9]", "", numero)  # Supprime les espaces et caractères non numériques
+    if len(numero) == 13 and numero.isdigit():
+        return 97 - (int(numero) % 97)
+    return None
+
+# Calcul automatique de la clé
+cle_secu = calculer_cle_securite_sociale(patient_data["Numero_Securite_Sociale"])
+
+# Affichage du numéro formaté et de la clé de contrôle
+if cle_secu is not None:
+    st.success(f"N° SS : {patient_data['Numero_Securite_Sociale']} - Clé : {cle_secu:02d}")
+)
 }
 # Liste déroulante des médicaments
 medicament_options = [
@@ -141,9 +195,9 @@ if st.button("Générer l'ordonnance PDF"):
 # Ecrire la date sur le PDF 
     pdf.cell(0, 5, date_complete, ln=True, align="R")
 # Ecrire le infos patient sur le PDF
-    pdf.cell(0, 5, txt=f"{patient_data['Civilite']} {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="R")
-    pdf.set_font("Arial", 'I', 9)    
+    pdf.cell(0, 10, txt=f"{patient_data['Civilite']} {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="R")
     pdf.set_y(pdf.get_y())  # Réduit l'espacement
+    pdf.set_font("Arial", 'I', 9)
     pdf.cell(0, 5, f"Né(e) le : {date_naissance} (Âge: {age})", ln=True, align="R")
 # Ajouter les informations de l'ordonnance
     pdf.set_font("Arial", 'B', 10)
