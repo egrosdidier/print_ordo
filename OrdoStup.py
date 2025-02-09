@@ -194,7 +194,8 @@ if selected_medicament == "(Champ libre)":
 patient_data["Medicament"] = selected_medicament if selected_medicament else "Non spécifié"
 patient_data["Posologie"] = st.number_input("Posologie (mg/jour)", min_value=0)
 
-# décomposition des posologies
+from num2words import num2words
+
 def decomposer_posologie(medicament, dose_totale):
     """Décompose la posologie en fonction des unités disponibles pour chaque médicament."""
     
@@ -222,6 +223,52 @@ def decomposer_posologie(medicament, dose_totale):
             result[unite] = quantite  # Ajout de l'unité et de la quantité correspondante
 
     return result  # Retourne un dictionnaire {unité: quantité}
+
+# Générer la décomposition automatique
+decomposition = decomposer_posologie(patient_data["Medicament"], patient_data["Posologie"])
+
+# Affichage et modification manuelle de la décomposition dans Streamlit
+st.subheader("Décomposition de la posologie")
+
+decomposition_modifiee = {}  # Stocke les valeurs modifiées par l'utilisateur
+
+# Liste des unités disponibles en fonction du médicament
+unités_possibles = {
+    "METHADONE GELULES": [40, 20, 10, 5, 1],
+    "METHADONE SIROP": [60, 40, 20, 10, 5, 1],
+    "BUPRENORPHINE HD": [8, 6, 2],
+    "SUBUTEX": [8, 2, 0.4],
+    "OROBUPRE": [8, 2]
+}
+
+# Vérifier si le médicament est dans la liste
+if patient_data["Medicament"] in unités_possibles:
+    total_corrige = 0  # Initialisation du total recalculé
+    
+    for unite in unités_possibles[patient_data["Medicament"]]:  # Boucle sur toutes les unités
+        quantite = decomposition.get(unite, 0)  # Récupérer la quantité ou 0 par défaut
+        nouvelle_valeur = st.number_input(
+            f"{quantite} unité(s) de {unite} mg", 
+            min_value=0, 
+            value=quantite, 
+            step=1,
+            key=f"decomp_{unite}"  # Clé unique pour éviter StreamlitDuplicateElementId
+        )
+        decomposition_modifiee[unite] = nouvelle_valeur  # Mise à jour des valeurs modifiées
+        total_corrige += nouvelle_valeur * unite  # Ajoute la dose corrigée au total recalculé
+
+    # Vérification si le total correspond à la posologie souhaitée
+    if total_corrige != patient_data["Posologie"]:
+        st.error(f"La somme des corrections ({total_corrige} mg) ne correspond pas à la posologie totale ({patient_data['Posologie']} mg).")
+    else:
+        st.success(f"Décomposition correcte : {total_corrige} mg = {patient_data['Posologie']} mg")
+
+else:
+    st.warning("Décomposition impossible pour ce médicament.")
+
+# Vérification pour affichage dans le PDF
+decomposition_finale = decomposition_modifiee if decomposition_modifiee else decomposition
+decomposition_finale = {unite: quantite for unite, quantite in decomposition_finale.items() if quantite > 0}
 
 if st.button("Générer l'ordonnance PDF"):
     # Initialiser le document PDF avant toute action
