@@ -90,7 +90,6 @@ num_secu_base = st.text_input(
     max_chars=6,
     help="Les 6 premiers chiffres sont : Sexe (1/2) + Année (2 derniers chiffres) + Mois (2 chiffres)"
 )
-
 # Champ de saisie pour compléter les 7 derniers chiffres
 reste_num_secu = st.text_input(
     "Complétez avec les 7 derniers chiffres", 
@@ -98,7 +97,6 @@ reste_num_secu = st.text_input(
     max_chars=7,
     help="Entrez les 7 derniers chiffres de votre N° SS"
 )
-
 # Vérification et assemblage du numéro complet
 if re.fullmatch(r"\d{6}", num_secu_base) and re.fullmatch(r"\d{7}", reste_num_secu):
     patient_data["Numero_Securite_Sociale"] = num_secu_base + reste_num_secu
@@ -120,7 +118,6 @@ cle_secu = calculer_cle_securite_sociale(patient_data["Numero_Securite_Sociale"]
 # Affichage du numéro formaté et de la clé de contrôle
 if cle_secu is not None:
     st.success(f"N° SS : {patient_data['Numero_Securite_Sociale']} - Clé : {cle_secu:02d}")
-}
 # Liste déroulante des médicaments
 medicament_options = [
     "METHADONE GELULES", "METHADONE SIROP", "BUPRENORPHINE HD", "SUBUTEX", "OROBUPRE",
