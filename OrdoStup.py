@@ -362,8 +362,6 @@ if st.button("Générer l'ordonnance PDF"):
         pdf.cell(0, 5, "Décomposition impossible pour ce médicament.", ln=True, align="L")
     pdf.set_font("Arial", '', 10)
     pdf.cell(0, 5, f"Pendant : {num2words(patient_data['Duree'], lang='fr')} jours", ln=True, align="L")    
-    pdf.set_font("Arial", '', 10)  # Texte standard
-    pdf.cell(0, 5, f"A délivrer tous les {num2words(patient_data['Rythme_de_Delivrance'], lang='fr')} jours", ln=True, align="L")
     pdf.set_font("Arial", '', 10)
 # Vérifier si le rythme de délivrance est de 28 jours
     if patient_data["Rythme_de_Delivrance"] == 28:
