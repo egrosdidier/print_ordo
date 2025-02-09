@@ -197,7 +197,7 @@ if decomposition:
     )
 else:
     decomposition_text = "Décomposition impossible pour ce médicament."
-    st.warning(decomposition_text)
+  
 
 # Autres saisies
 patient_data["Duree"] = st.number_input("Durée (jours)", min_value=0)
