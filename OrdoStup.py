@@ -205,6 +205,10 @@ if st.button("Générer l'ordonnance PDF"):
     else:
         date_naissance = "Non renseignée"
         age = "Non renseigné"
+# Numéro de sécurité sociale si saisi
+    if patient_data["Numero_Securite_Sociale"] and cle_secu is not None:
+        pdf.set_font("Arial", '', 10)  # Texte standard
+        pdf.cell(0, 5, f"N° Sécurité Sociale : {num_secu_formatte} - Clé : {cle_secu:02d}", ln=True, align="L")
 # Ecrire la date sur le PDF 
     pdf.cell(0, 5, date_complete, ln=True, align="R")
 # Ecrire le infos patient sur le PDF
