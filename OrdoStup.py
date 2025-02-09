@@ -363,11 +363,12 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.set_font("Arial", '', 10)
     pdf.cell(0, 5, f"Pendant : {num2words(patient_data['Duree'], lang='fr')} jours", ln=True, align="L")    
     pdf.set_font("Arial", '', 10)
-# Vérifier si le rythme de délivrance est de 28 jours
-    if patient_data["Rythme_de_Delivrance"] == 28:
-        pdf.cell(0, 5, f"A délivrer tous les {num2words(patient_data['Rythme_de_Delivrance'], lang='fr')} jours (en une seule fois)", ln=True, align="L")
-    else:
-        pdf.cell(0, 5, f"A délivrer tous les {num2words(patient_data['Rythme_de_Delivrance'], lang='fr')} jours", ln=True, align="L")
+pdf.set_font("Arial", '', 10)
+# Vérification pour ajouter (délivrance en une fois) si durée = rythme
+if patient_data["Rythme_de_Delivrance"] == patient_data["Duree"]:
+    pdf.cell(0, 5, f"A délivrer tous les {num2words(patient_data['Rythme_de_Delivrance'], lang='fr')} jours (délivrance en une fois)", ln=True, align="L")
+else:
+    pdf.cell(0, 5, f"A délivrer tous les {num2words(patient_data['Rythme_de_Delivrance'], lang='fr')} jours", ln=True, align="L")
     pdf.cell(0, 10, txt=f"Lieu de délivrance: {patient_data.get('Lieu_de_Delivrance', 'Non spécifié')}", ln=True, align="L")
     pdf.cell(0, 5, txt=f"Chevauchement autorisé: {patient_data.get('Chevauchement_Autorise', 'Non spécifié')}", ln=True, align="L")
 # Buffer
