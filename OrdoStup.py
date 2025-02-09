@@ -1,4 +1,4 @@
-import streamlit as st
+  import streamlit as st
 import json
 import io
 import os
@@ -83,11 +83,15 @@ medicament_options = [
     "SUBOXONE", "METHYLPHENIDATE", "CONCERTA", "QUASYM", "RITATINE LP",
     "RITALINE LI", "MEDIKINET", "(Champ libre)"
 ]
+
 selected_medicament = st.selectbox("Médicament", medicament_options)
+
+# Si l'utilisateur choisit "(Champ libre)", lui permettre d'entrer un médicament
 if selected_medicament == "(Champ libre)":
     selected_medicament = st.text_input("Entrez le médicament")
-    patient_data["Medicament"] = selected_medicament
 
+# Assigner correctement la valeur au dictionnaire patient_data
+patient_data["Medicament"] = selected_medicament if selected_medicament else "Non spécifié"
 patient_data["Posologie"] = st.number_input("Posologie (mg/jour)", min_value=0)
 patient_data["Duree"] = st.number_input("Durée (jours)", min_value=0)
 patient_data["Rythme_de_Delivrance"] = st.number_input("Rythme de délivrance (jours)", min_value=0)
