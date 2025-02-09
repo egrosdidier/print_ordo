@@ -142,17 +142,11 @@ if st.button("Générer l'ordonnance PDF"):
     jour_semaine = jours_fr[maintenant.weekday()]
     mois_lettres = mois_fr[maintenant.month - 1]
     date_complete = f"{jour_semaine} {jour_lettres} {mois_lettres} {maintenant.year}"
-    
+# Définir le pdf
     pdf.set_xy(150, 70)
     pdf.set_font("Arial", 'B', 10)
     pdf.cell(0, 5, date_complete, ln=True, align="R")
-    
     pdf.cell(0, 20, txt=f"{patient_data['Civilite']} {patient_data['Nom']} {patient_data['Prenom']}", ln=True, align="R")
-   
-# Ajouter la date de naissance et l'âge sous le nom du patient
-    pdf.set_xy(10, pdf.get_y())
-    pdf.set_font("Arial", '', 10)
-
 # Vérification et formatage de la date de naissance
     if patient_data["Date_de_Naissance"]:
         date_naissance = patient_data["Date_de_Naissance"].strftime("%d/%m/%Y")
@@ -162,11 +156,9 @@ if st.button("Générer l'ordonnance PDF"):
     else:
         date_naissance = "Non renseignée"
         age = "Non renseigné"
-
 # Ecrire la date de naissance sur le PDF
-    pdf.set_font("Arial", '', 10)
+    pdf.set_font("Arial", '', 9)
     pdf.cell(0, 5, f"Né(e) le : {date_naissance} (Âge: {age})", ln=True, align="R")
-
 # Ajouter les informations de l'ordonnance
     pdf.set_font("Arial", 'B', 10)
     pdf.cell(0, 10, txt=f"Médicament: {patient_data.get('Medicament', 'Non spécifié')}", ln=True, align="L")
@@ -176,8 +168,9 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.cell(0, 5, txt=f"Rythme de délivrance: Tous les {patient_data.get('Rythme_de_Delivrance', 'Non spécifié')} jours", ln=True, align="L")
     pdf.cell(0, 10, txt=f"Lieu de délivrance: {patient_data.get('Lieu_de_Delivrance', 'Non spécifié')}", ln=True, align="L")
     pdf.cell(0, 5, txt=f"Chevauchement autorisé: {patient_data.get('Chevauchement_Autorise', 'Non spécifié')}", ln=True, align="L")
-   
+# Buffer
     buffer = io.BytesIO()
     buffer.write(pdf.output(dest="S").encode("latin1"))
     buffer.seek(0)
+# Bouton télécharger
     st.download_button("Télécharger l'ordonnance", buffer, "ordonnance.pdf", "application/pdf")
