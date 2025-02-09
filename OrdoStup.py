@@ -293,13 +293,13 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.cell(0, 5, f"Né(e) le : {date_naissance} (Âge: {age})", ln=True, align="R")
 ## Vérifier securité sociale definie avant de les utiliser
     if "Numero_Securite_Sociale" not in patient_data:
-   		 patient_data["Numero_Securite_Sociale"] = ""
+        patient_data["Numero_Securite_Sociale"] = ""
     if "cle_secu" not in locals():
-    	 cle_secu = None
+        cle_secu = None
 # Vérifier que les données SS sont bien valides avant d'afficher
     if patient_data["Numero_Securite_Sociale"] and cle_secu is not None:
-  		 pdf.set_font("Arial", '', 10)  # Texte standard
-         pdf.cell(0, 5, f"N° Sécurité Sociale : {num_secu_formatte} - Clé : {cle_secu:02d}", ln=True, align="L")
+        pdf.set_font("Arial", '', 10)  # Texte standard
+        pdf.cell(0, 5, f"N° Sécurité Sociale : {num_secu_formatte} - Clé : {cle_secu:02d}", ln=True, align="L")
 # Ajouter les informations de l'ordonnance
     pdf.set_font("Arial", 'B', 10)
     pdf.cell(0, 10, txt=f"{patient_data.get('Medicament', 'Non spécifié')}", ln=True, align="L")
