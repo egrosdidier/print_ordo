@@ -97,18 +97,17 @@ patient_data["Chevauchement_Autorise"] = st.selectbox("Chevauchement autorisé",
 if st.button("Générer l'ordonnance PDF"):
     pdf = FPDF() 
     pdf.add_page()
-    pdf.set_xy(10, 50)
     pdf.set_left_margin(preferences["marges"]["gauche"])
     pdf.set_right_margin(preferences["marges"]["droite"])
     pdf.set_top_margin(preferences["marges"]["haut"])
     
-if preferences.get("logo") and os.path.exists(preferences["logo"]):
-    try:
-        pdf.image(preferences["logo"], x=10, y=10, w=40)
-    except Exception as e:
-        st.warning(f"Erreur lors du chargement du logo : {e}")
-else:
-    st.warning("Aucun logo trouvé. Assurez-vous d'en téléverser un dans les préférences.")
+    if preferences.get("logo") and os.path.exists(preferences["logo"]):
+        try:
+            pdf.image(preferences["logo"], x=10, y=10, w=40)
+        except Exception as e:
+            st.warning(f"Erreur lors du chargement du logo : {e}")
+    else:
+        st.warning("Aucun logo trouvé. Assurez-vous d'en téléverser un dans les préférences.")
 
 # Écrire sur le PDF
 pdf.set_xy(10, 50)
