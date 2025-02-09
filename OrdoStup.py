@@ -174,26 +174,6 @@ patient_data["Rythme_de_Delivrance"] = st.number_input("Rythme de délivrance (j
 patient_data["Lieu_de_Delivrance"] = st.text_input("Lieu de délivrance")
 patient_data["Chevauchement_Autorise"] = st.selectbox("Chevauchement autorisé", ["Oui", "Non"], index=1)
 
-# Décomposition des posologies
-def decomposer_posologie(medicament, posologie):
-    if medicament == "METHADONE GELULES":
-        doses = [40, 20, 10, 5, 1]
-    elif medicament == "METHADONE SIROP":
-        doses = [60, 40, 20, 10, 5, 1]
-    elif medicament in ["BUPRENORPHINE HD", "SUBUTEX"]:
-        doses = [8, 2, 0.4]
-    elif medicament == "OROBUPRE":
-        doses = [8, 2]
-    else:
-        return []
-    
-    result = []
-    for dose in doses:
-        qty, posologie = divmod(posologie, dose)
-        if qty > 0:
-            result.append(f"{qty} × {dose} mg")
-    return result
-
 if st.button("Générer l'ordonnance PDF"):
     decomposition = decomposer_posologie(patient_data["Medicament"], patient_data["Posologie"])
     pdf = FPDF()
