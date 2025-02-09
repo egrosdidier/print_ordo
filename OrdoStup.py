@@ -68,8 +68,9 @@ patient_data = {
     "Prenom": st.text_input("Prénom du patient", value="Prénom"),
     "Date_de_Naissance": st.date_input("Date de naissance", value=None, format="DD/MM/YYYY"),
 }
-# Numéro secu
+# Numéro sécurité sociale
 import re
+
 def generer_num_secu_base(civilite, date_naissance):
     """Génère les 5 premiers chiffres du numéro de Sécurité Sociale."""
     if not date_naissance:
@@ -79,6 +80,14 @@ def generer_num_secu_base(civilite, date_naissance):
     annee = f"{date_naissance.year % 100:02d}"  # Année sur 2 chiffres
     mois = f"{date_naissance.month:02d}"  # Mois sur 2 chiffres
     return f"{sexe}{annee}{mois}"  # Retourne 5 premiers chiffres
+
+# Fonction pour calculer la clé de Sécurité Sociale
+def calculer_cle_securite_sociale(numero):
+    """Calcule la clé de contrôle pour un numéro de Sécurité Sociale."""
+    numero = re.sub(r"[^0-9]", "", numero)  # Supprime les espaces et caractères non numériques
+    if len(numero) == 13 and numero.isdigit():
+        return 97 - (int(numero) % 97)
+    return None  # ✅ Retourne None si invalide
 
 # Générer les 5 premiers chiffres par défaut
 num_secu_base = generer_num_secu_base(patient_data["Civilite"], patient_data["Date_de_Naissance"])
@@ -91,14 +100,13 @@ num_secu_complet = st.text_input(
     help="Les 5 premiers chiffres sont pré-remplis : Sexe (1/2) + Année (2 derniers chiffres) + Mois (2 chiffres). Complétez les 8 autres."
 )
 
-# Vérification que le numéro contient bien 13 chiffres
-if not re.fullmatch(r"\d{13}", num_secu_complet):
-    st.error("Le numéro de Sécurité Sociale doit contenir exactement 13 chiffres.")
-    patient_data["Numero_Securite_Sociale"] = ""
-else:
+# Vérification si 13 chiffres sont bien saisis
+cle_secu = None  # Valeur par défaut avant validation complète
+if len(num_secu_complet) == 13 and re.fullmatch(r"\d{13}", num_secu_complet):
     patient_data["Numero_Securite_Sociale"] = num_secu_complet
+    cle_secu = calculer_cle_securite_sociale(patient_data["Numero_Securite_Sociale"])
 
-# Affichage du numéro formaté et de la clé de contrôle
+# Affichage de la clé de contrôle uniquement si le numéro est complet
 if cle_secu is not None:
     st.success(f"N° SS : {patient_data['Numero_Securite_Sociale']} - Clé : {cle_secu:02d}")
 
