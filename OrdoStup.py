@@ -49,14 +49,6 @@ def decomposer_posologie(medicament, dose_totale):
 
     return result  # Retourne un dictionnaire {unité: quantité}
 
-#Fonction posologie ne touyte lettre
-from num2words import num2words
-def posologie_en_toutes_lettres(posologie):
-    """Convertit une posologie en toutes lettres."""
-    if posologie > 0:
-        return num2words(posologie, lang='fr')
-    return "zéro"
-  
 # Charger les préférences utilisateur
 def charger_preferences_utilisateur():
     try:
@@ -299,14 +291,20 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.set_y(pdf.get_y()-2)  # Réduit l'espacement
     pdf.set_font("Arial", 'I', 9)
     pdf.cell(0, 5, f"Né(e) le : {date_naissance} (Âge: {age})", ln=True, align="R")
-# Numéro de sécurité sociale si saisi
+## Vérifier securité sociale definie avant de les utiliser
+    if "Numero_Securite_Sociale" not in patient_data:
+   		 patient_data["Numero_Securite_Sociale"] = ""
+    if "cle_secu" not in locals():
+    	 cle_secu = None
+# Vérifier que les données SS sont bien valides avant d'afficher
     if patient_data["Numero_Securite_Sociale"] and cle_secu is not None:
-        pdf.set_font("Arial", '', 9)  # Texte standard
-        pdf.cell(0, 5, f"N° Sécurité Sociale : {num_secu_formatte} - Clé : {cle_secu:02d}", ln=True, align="R")
+  		 pdf.set_font("Arial", '', 10)  # Texte standard
+         pdf.cell(0, 5, f"N° Sécurité Sociale : {num_secu_formatte} - Clé : {cle_secu:02d}", ln=True, align="L")
 # Ajouter les informations de l'ordonnance
-    pdf.set_font("Arial", 'B', 10)  # Mettre en gras pour le médicament et la posologie
-    pdf.cell(0, 5, f"{patient_data['Medicament']} {posologie_en_toutes_lettres(patient_data['Posologie'])} milligrammes", ln=True, align="L")
-    pdf.set_font("Arial", '', 10)  # Remettre en normal après l'affichage
+    pdf.set_font("Arial", 'B', 10)
+    pdf.cell(0, 10, txt=f"{patient_data.get('Medicament', 'Non spécifié')}", ln=True, align="L")
+    pdf.set_font("Arial", '', 10)
+    pdf.cell(0, 5, txt=f"Posologie: {patient_data.get('Posologie', 'Non spécifiée')} mg/j", ln=True, align="L")
     pdf.cell(0, 5, txt=f"Durée: {patient_data.get('Duree', 'Non spécifiée')} jours", ln=True, align="L")
     pdf.cell(0, 5, txt=f"Rythme de délivrance: Tous les {patient_data.get('Rythme_de_Delivrance', 'Non spécifié')} jours", ln=True, align="L")
     pdf.cell(0, 10, txt=f"Lieu de délivrance: {patient_data.get('Lieu_de_Delivrance', 'Non spécifié')}", ln=True, align="L")
