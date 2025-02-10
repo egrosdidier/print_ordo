@@ -91,7 +91,7 @@ preferences["rpps"] = st.sidebar.text_input("Numéro RPPS", preferences["rpps"])
 preferences["coordonnees"] = st.sidebar.text_area("Coordonnées", preferences["coordonnees"])
 # Gestion du logo
 defaut_logo_path = "logo_structure.png"
-logo_uploaded = st.sidebar.file_uploader("Logo de la structure (PNG, JPG, JPEG)", type=["png", "jpg", "jpeg"])
+logo_uploaded = st.sidebar.file_uploader("Logo de la structure en haut à gauche (PNG, JPG, JPEG)", type=["png", "jpg", "jpeg"])
 if logo_uploaded:
     image = Image.open(logo_uploaded).convert("RGBA")
     white_background = Image.new("RGBA", image.size, (255, 255, 255, 255))
@@ -100,10 +100,23 @@ if logo_uploaded:
     preferences["logo"] = defaut_logo_path
 else:
     preferences["logo"] = preferences.get("logo", None)
+# Gestion de la signature du médecin
+defaut_signature_path = "signature_medecin.png"
+signature_uploaded = st.sidebar.file_uploader("Signature du médecin (PNG, JPG, JPEG)", type=["png", "jpg", "jpeg"])
 
+if signature_uploaded:
+    image = Image.open(signature_uploaded).convert("RGBA")
+    white_background = Image.new("RGBA", image.size, (255, 255, 255, 255))
+    image = Image.alpha_composite(white_background, image).convert("RGB")
+    image.save(defaut_signature_path, format="PNG", optimize=True)
+    preferences["signature"] = defaut_signature_path
+else:
+    preferences["signature"] = preferences.get("signature", None)
+# Sauvegarde des préférences
 if st.sidebar.button("Sauvegarder les préférences"):
     sauvegarder_preferences_utilisateur(preferences)
     st.sidebar.success("Préférences enregistrées avec succès !")
+    
 # Interface de saisie de l'ordonnance
 st.header("Créer une ordonnance")
 # Saisie des informations du patient avec valeurs par défaut
@@ -272,7 +285,8 @@ decomposition_finale = {unite: quantite for unite, quantite in decomposition_fin
 # Saisies suivantes
 patient_data["Duree"] = st.number_input("Durée du traitement (jours)", min_value=1, step=1)
 patient_data["Rythme_de_Delivrance"] = st.number_input("Rythme de délivrance (jours)", min_value=1, step=1)
-
+patient_data["Chevauchement_Autorise"] = st.selectbox("Chevauchement autorisé", ["Oui", "Non"], index=1)
+patient_data["Lieu_de_Delivrance"] = st.text_input("Lieu de délivrance", placeholder="Ex: Pharmacie X, Centre médical Y")
 
 if st.button("Générer l'ordonnance PDF"):
     # Initialiser le document PDF avant toute action
@@ -343,10 +357,11 @@ if st.button("Générer l'ordonnance PDF"):
     if patient_data["Numero_Securite_Sociale"] and cle_secu is not None:
         pdf.set_font("Arial", '', 10)  # Texte standard
         pdf.cell(0, 5, f"N° Sécurité Sociale : {num_secu_formatte} - Clé : {cle_secu:02d}", ln=True, align="R")
-# Ajouter les informations de l'ordonnance
+# Ajouter médicament
     pdf.set_font("Arial", 'B', 12)
-    pdf.cell(0, 10, f"{patient_data['Medicament']} : {num2words(patient_data['Posologie'], lang='fr')} milligrammes par jour", ln=True, align="L")
-  # Vérifier si la décomposition a été modifiée ou non
+    pdf.cell(0, 20, f"{patient_data['Medicament']} : {num2words(patient_data['Posologie'], lang='fr')} milligrammes par jour", ln=True, align="L")
+    pdf.set_font("Arial", '', 10)
+# Vérifier si la décomposition a été modifiée ou non
     decomposition_finale = decomposition_modifiee if decomposition_modifiee else decomposition
 
 # Supprimer les unités de quantité 0 pour l'affichage dans le PDF
