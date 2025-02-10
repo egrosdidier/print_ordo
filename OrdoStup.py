@@ -482,7 +482,7 @@ if st.button("Générer l'ordonnance PDF"):
         st.session_state.pdf_ready = False
 
 # Vérification après un clic sur le bouton
-    if st.button("Générer l'ordonnance PDF"):
+    if st.button("Générer l'ordonnance PDF", key="generer_pdf_button"):
         if not patient_data["Lieu_de_Delivrance"].strip():  # Vérifie si le champ est vide
             st.error("Le lieu de délivrance est obligatoire. Veuillez le renseigner et le valider.")
             st.session_state.pdf_ready = False  # Bloque la génération
