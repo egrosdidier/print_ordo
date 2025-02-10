@@ -475,13 +475,6 @@ patient_data["Lieu_de_Delivrance"] = st.text_area("Lieu de délivrance (Nom + Ad
 # Vérification après un clic sur le bouton
 generer_clicked = st.button("Générer l'ordonnance PDF")  # Détecte si le bouton a été cliqué
 
-# Saisie du lieu de délivrance (obligatoire)
-patient_data["Lieu_de_Delivrance"] = st.text_area("Lieu de délivrance (Nom + Adresse)", 
-                                                  placeholder="Exemple : \nPharmacie Centrale\n12 rue des Lilas, 75000 Paris")
-
-# Vérification après un clic sur le bouton
-generer_clicked = st.button("Générer l'ordonnance PDF")  # Détecte si le bouton a été cliqué
-
 if generer_clicked:
     if not patient_data["Lieu_de_Delivrance"].strip():  # Vérifie si le champ est vide
         st.error("Le lieu de délivrance est obligatoire. Veuillez le renseigner.")
