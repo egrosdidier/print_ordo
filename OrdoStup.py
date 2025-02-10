@@ -473,10 +473,6 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.set_font("Arial", '', 10)
     pdf.cell(50, 5, preferences["medecin"], ln=True, align="C")  # Centré
 
-# Saisie du lieu de délivrance (obligatoire)
-patient_data["Lieu_de_Delivrance"] = st.text_area("Lieu de délivrance (Nom + Adresse)", 
-                                                  placeholder="Exemple : \nPharmacie Centrale\n12 rue des Lilas, 75000 Paris")
-
 # Initialisation de l'état de la génération si elle n'existe pas encore
 if "pdf_ready" not in st.session_state:
     st.session_state.pdf_ready = False
