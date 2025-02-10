@@ -105,7 +105,6 @@ else:
 # Gestion du deuxième logo (haut à droite)
 defaut_logo_droit_path = "logo_droit.png"
 logo_droit_uploaded = st.sidebar.file_uploader("Deuxième logo (haut à droite)", type=["png", "jpg", "jpeg"])
-
 if logo_droit_uploaded:
     image = Image.open(logo_droit_uploaded).convert("RGBA")
     white_background = Image.new("RGBA", image.size, (255, 255, 255, 255))
@@ -336,7 +335,7 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.cell(0, 5, f"FINESS: {preferences['finess']}", ln=True, align="L")
 
 # Ajout du deuxième logo (haut à droite)
-   if preferences.get("logo_droit") and os.path.exists(preferences["logo_droit"]):
+    if preferences.get("logo_droit") and os.path.exists(preferences["logo_droit"]):
         try:
             pdf.image(preferences["logo_droit"], x=150, y=10, w=40)  # Logo à droite (aligné au même niveau)
         except RuntimeError:
