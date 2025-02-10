@@ -477,27 +477,27 @@ if st.button("Générer l'ordonnance PDF"):
         st.session_state.pdf_ready = False
 
 # Vérification après un clic sur le bouton
-if st.button("Générer l'ordonnance PDF"):
-    if not patient_data["Lieu_de_Delivrance"].strip():  # Vérifie si le champ est vide
-        st.error("Le lieu de délivrance est obligatoire. Veuillez le renseigner.")
-        st.session_state.pdf_ready = False  # Bloque la génération
-    else:
-        # Génération du PDF seulement si le lieu de délivrance est rempli
-        pdf = FPDF()
-        pdf.add_page()
+    if st.button("Générer l'ordonnance PDF"):
+        if not patient_data["Lieu_de_Delivrance"].strip():  # Vérifie si le champ est vide
+            st.error("Le lieu de délivrance est obligatoire. Veuillez le renseigner.")
+            st.session_state.pdf_ready = False  # Bloque la génération
+        else:
+            # Génération du PDF seulement si le lieu de délivrance est rempli
+            pdf = FPDF()
+            pdf.add_page()
         
-        pdf.set_font("Arial", '', 10)
-        pdf.multi_cell(0, 5, f"Lieu de délivrance :\n{patient_data['Lieu_de_Delivrance']}", align="L")
+            pdf.set_font("Arial", '', 10)
+            pdf.multi_cell(0, 5, f"Lieu de délivrance :\n{patient_data['Lieu_de_Delivrance']}", align="L")
 
         # Génération du fichier en mémoire
-        buffer = io.BytesIO()
-        buffer.write(pdf.output(dest="S").encode("latin1"))
-        buffer.seek(0)
+            buffer = io.BytesIO()
+            buffer.write(pdf.output(dest="S").encode("latin1"))
+            buffer.seek(0)
 
         # Stocke le fichier PDF dans session_state pour qu'il reste disponible après le clic
-        st.session_state.pdf_buffer = buffer
-        st.session_state.pdf_ready = True  # Autorise l'affichage du bouton de téléchargement
+            st.session_state.pdf_buffer = buffer
+            st.session_state.pdf_ready = True  # Autorise l'affichage du bouton de téléchargement
 
 # Affichage du bouton de téléchargement uniquement si le PDF a été généré avec succès
-if st.session_state.pdf_ready:
-    st.download_button("Télécharger l'ordonnance", st.session_state.pdf_buffer, "ordonnance.pdf", "application/pdf")
+    if st.session_state.pdf_ready:
+        st.download_button("Télécharger l'ordonnance", st.session_state.pdf_buffer, "ordonnance.pdf", "application/pdf")
