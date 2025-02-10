@@ -474,35 +474,39 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.cell(50, 5, preferences["medecin"], ln=True, align="C")  # Centré
 
 # Saisie du lieu de délivrance (obligatoire)
-    patient_data["Lieu_de_Delivrance"] = st.text_area("Lieu de délivrance (Nom + Adresse)", 
+patient_data["Lieu_de_Delivrance"] = st.text_area("Lieu de délivrance (Nom + Adresse)", 
                                                   placeholder="Exemple : \nPharmacie Centrale\n12 rue des Lilas, 75000 Paris")
 
 # Initialisation de l'état de la génération si elle n'existe pas encore
-    if "pdf_ready" not in st.session_state:
-        st.session_state.pdf_ready = False
+if "pdf_ready" not in st.session_state:
+    st.session_state.pdf_ready = False
+
+if "pdf_buffer" not in st.session_state:
+    st.session_state.pdf_buffer = None  # Initialisation du buffer PDF
 
 # Vérification après un clic sur le bouton
-    if st.button("Générer l'ordonnance PDF", key="generer_pdf_button"):
-        if not patient_data["Lieu_de_Delivrance"].strip():  # Vérifie si le champ est vide
-            st.error("Le lieu de délivrance est obligatoire. Veuillez le renseigner et le valider.")
-            st.session_state.pdf_ready = False  # Bloque la génération
-        else:
-            # Génération du PDF seulement si le lieu de délivrance est rempli
-            pdf = FPDF()
-            pdf.add_page()
-        
-            pdf.set_font("Arial", '', 10)
-            pdf.multi_cell(0, 5, f"Lieu de délivrance :\n{patient_data['Lieu_de_Delivrance']}", align="L")
+if st.button("Générer l'ordonnance PDF", key="generer_pdf_button"):
+    if not patient_data["Lieu_de_Delivrance"].strip():  # Vérifie si le champ est vide
+        st.error("Le lieu de délivrance est obligatoire. Veuillez le renseigner et le valider.")
+        st.session_state.pdf_ready = False  # Bloque la génération
+    else:
+        # Marquer que le PDF est en cours de génération
+        st.session_state.pdf_ready = True  
+
+        # Génération du PDF
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Arial", '', 10)
+        pdf.multi_cell(0, 5, f"Lieu de délivrance :\n{patient_data['Lieu_de_Delivrance']}", align="L")
 
         # Génération du fichier en mémoire
-            buffer = io.BytesIO()
-            buffer.write(pdf.output(dest="S").encode("latin1"))
-            buffer.seek(0)
+        buffer = io.BytesIO()
+        buffer.write(pdf.output(dest="S").encode("latin1"))
+        buffer.seek(0)
 
-        # Stocke le fichier PDF dans session_state pour qu'il reste disponible après le clic
-            st.session_state.pdf_buffer = buffer
-            st.session_state.pdf_ready = True  # Autorise l'affichage du bouton de téléchargement
+        # Stocke le fichier PDF dans session_state
+        st.session_state.pdf_buffer = buffer
 
 # Affichage du bouton de téléchargement uniquement si le PDF a été généré avec succès
-    if st.session_state.pdf_ready:
-        st.download_button("Télécharger l'ordonnance", st.session_state.pdf_buffer, "ordonnance.pdf", "application/pdf")
+if st.session_state.pdf_ready and st.session_state.pdf_buffer:
+    st.download_button("Télécharger l'ordonnance", st.session_state.pdf_buffer, "ordonnance.pdf", "application/pdf")
