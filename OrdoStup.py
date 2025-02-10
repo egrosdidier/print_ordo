@@ -316,7 +316,7 @@ if st.button("Valider"):
     st.success("Lieu de délivrance validé ✅")
 # Vérification que le champ est rempli
 if not patient_data["Lieu_de_Delivrance"].strip():
-    st.error("Le lieu de délivrance est obligatoire. Veuillez le renseigner avant de générer l'ordonnance.")
+    st.error("Lieu de délivrance obligatoire. A renseigner et valider avant de générer l'ordonnance.")
     lieu_rempli = False
 else:
     lieu_rempli = True
