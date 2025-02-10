@@ -344,7 +344,7 @@ if st.button("Générer l'ordonnance PDF"):
         pdf.set_font("Arial", '', 10)  # Texte standard
         pdf.cell(0, 5, f"N° Sécurité Sociale : {num_secu_formatte} - Clé : {cle_secu:02d}", ln=True, align="R")
 # Ajouter les informations de l'ordonnance
-    pdf.set_font("Arial", 'B', 10)
+    pdf.set_font("Arial", 'B', 12)
     pdf.cell(0, 10, f"{patient_data['Medicament']} : {num2words(patient_data['Posologie'], lang='fr')} milligrammes par jour", ln=True, align="L")
   # Vérifier si la décomposition a été modifiée ou non
     decomposition_finale = decomposition_modifiee if decomposition_modifiee else decomposition
@@ -360,15 +360,15 @@ if st.button("Générer l'ordonnance PDF"):
             pdf.cell(0, 5, f"- {quantite_text} {unite_nom} de {num2words(unite, lang='fr')} milligrammes", ln=True, align="L")
     else:
         pdf.cell(0, 5, "Décomposition impossible pour ce médicament.", ln=True, align="L")
-    pdf.set_font("Arial", 'B', 10)
+    pdf.set_font("Arial", '', 10)
     pdf.cell(0, 10, f"Pendant : {num2words(patient_data['Duree'], lang='fr')} jours", ln=True, align="L")    
-    pdf.set_font("Arial", 'B', 10)
+    pdf.set_font("Arial", '', 10)
 # Vérification pour ajouter (délivrance en une fois) si durée = rythme
     if patient_data["Rythme_de_Delivrance"] == patient_data["Duree"]:
-        pdf.set_font("Arial", 'B', 10)
+        pdf.set_font("Arial", '', 10)
         pdf.cell(0, 8, f"A délivrer tous les {num2words(patient_data['Rythme_de_Delivrance'], lang='fr')} jours (délivrance en une fois)", ln=True, align="L")
     else:
-        pdf.set_font("Arial", 'B', 10)
+        pdf.set_font("Arial", '', 10)
         pdf.cell(0, 8, f"A délivrer tous les {num2words(patient_data['Rythme_de_Delivrance'], lang='fr')} jours", ln=True, align="L")
         pdf.cell(0, 5, txt=f"Lieu de délivrance: {patient_data.get('Lieu_de_Delivrance', 'Non spécifié')}", ln=True, align="L")
         pdf.cell(0, 5, txt=f"Chevauchement autorisé: {patient_data.get('Chevauchement_Autorise', 'Non spécifié')}", ln=True, align="L")
