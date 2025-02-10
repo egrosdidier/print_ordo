@@ -310,7 +310,8 @@ patient_data["Chevauchement_Autorise"] = st.selectbox("Chevauchement autorisé",
 # Saisie du lieu de délivrance en multi-ligne, obligatoire
 # Saisie multi-ligne
 patient_data["Lieu_de_Delivrance"] = st.text_area("Lieu de délivrance (Nom + Adresse)",
-                                                  placeholder="Exemple : \nPharmacie Centrale\n12 rue des Lilas, 75000 Paris")
+                                                  placeholder="Exemple : \nPharmacie Centrale\n12 rue des Lilas, 75000 Paris",
+                                                  key="lieu_delivrance_unique")
 # Bouton pour valider la saisie
 if st.button("Valider"):
     st.success("Lieu de délivrance validé ✅")
