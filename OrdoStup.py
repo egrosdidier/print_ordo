@@ -322,7 +322,6 @@ if not patient_data["Lieu_de_Delivrance"].strip():
 else:
     lieu_rempli = True
     
-if st.button("Générer l'ordonnance PDF"):
 # Initialiser le document PDF avant toute action
     pdf = FPDF()
     pdf.add_page()
