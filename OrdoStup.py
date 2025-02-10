@@ -306,8 +306,17 @@ decomposition_finale = {unite: quantite for unite, quantite in decomposition_fin
 patient_data["Duree"] = st.number_input("Durée du traitement (jours)", min_value=1, step=1)
 patient_data["Rythme_de_Delivrance"] = st.number_input("Rythme de délivrance (jours)", min_value=1, step=1)
 patient_data["Chevauchement_Autorise"] = st.selectbox("Chevauchement autorisé", ["Oui", "Non"], index=1)
-patient_data["Lieu_de_Delivrance"] = st.text_input("Lieu de délivrance", placeholder="Ex: Pharmacie X, Centre médical Y")
-
+# Saisie du lieu de délivrance en multi-ligne
+# Saisie du lieu de délivrance en multi-ligne, obligatoire
+patient_data["Lieu_de_Delivrance"] = st.text_area("Lieu de délivrance (Nom + Adresse)", 
+                                                  placeholder="Exemple : \nPharmacie Centrale\n12 rue des Lilas, 75000 Paris")
+# Vérification que le champ est rempli
+if not patient_data["Lieu_de_Delivrance"].strip():
+    st.error("Le lieu de délivrance est obligatoire. Veuillez le renseigner avant de générer l'ordonnance.")
+    lieu_rempli = False
+else:
+    lieu_rempli = True
+    
 if st.button("Générer l'ordonnance PDF"):
 # Initialiser le document PDF avant toute action
     pdf = FPDF()
@@ -434,8 +443,11 @@ if st.button("Générer l'ordonnance PDF"):
     else:
         pdf.set_font("Arial", '', 10)
         pdf.cell(0, 8, f"A délivrer tous les {num2words(patient_data['Rythme_de_Delivrance'], lang='fr')} jours", ln=True, align="L")
-        pdf.cell(0, 5, txt=f"Lieu de délivrance: {patient_data.get('Lieu_de_Delivrance', 'Non spécifié')}", ln=True, align="L")
-        pdf.cell(0, 5, txt=f"Chevauchement autorisé: {patient_data.get('Chevauchement_Autorise', 'Non spécifié')}", ln=True, align="L")
+
+# Autres mentions
+    pdf.cell(0, 5, txt=f"Chevauchement autorisé: {patient_data.get('Chevauchement_Autorise', 'Non spécifié')}", ln=True, align="L")
+    pdf.set_font("Arial", '', 10)
+    pdf.multi_cell(0, 5, f"Lieu de délivrance :\n{patient_data['Lieu_de_Delivrance']}", align="L")
 
 # Position par défaut pour la signature et le nom du médecin
     y_position_signature = pdf.get_y() + 10  # Position de référence en bas du document
@@ -455,9 +467,17 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.set_xy(150, y_position_text)  # Position définie
     pdf.set_font("Arial", '', 10)
     pdf.cell(50, 5, preferences["medecin"], ln=True, align="C")  # Centré
-# Buffer
+
+if st.button("Générer l'ordonnance PDF") and lieu_rempli:
+
+# Génération du PDF seulement si le lieu de délivrance est rempli
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", '', 10)
+    pdf.multi_cell(0, 5, f"Lieu de délivrance :\n{patient_data['Lieu_de_Delivrance']}", align="L")
+
+ # Génération du fichier
     buffer = io.BytesIO()
     buffer.write(pdf.output(dest="S").encode("latin1"))
     buffer.seek(0)
-# Bouton télécharger
     st.download_button("Télécharger l'ordonnance", buffer, "ordonnance.pdf", "application/pdf")
