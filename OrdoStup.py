@@ -468,16 +468,26 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.set_font("Arial", '', 10)
     pdf.cell(50, 5, preferences["medecin"], ln=True, align="C")  # Centré
 
-if st.button("Générer l'ordonnance PDF") and lieu_rempli:
+# Saisie du lieu de délivrance (obligatoire)
+patient_data["Lieu_de_Delivrance"] = st.text_area("Lieu de délivrance (Nom + Adresse)", 
+                                                  placeholder="Exemple : \nPharmacie Centrale\n12 rue des Lilas, 75000 Paris")
 
-# Génération du PDF seulement si le lieu de délivrance est rempli
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", '', 10)
-    pdf.multi_cell(0, 5, f"Lieu de délivrance :\n{patient_data['Lieu_de_Delivrance']}", align="L")
+# Vérification après un clic sur le bouton
+generer_clicked = st.button("Générer l'ordonnance PDF")  # Détecte si le bouton a été cliqué
 
- # Génération du fichier
-    buffer = io.BytesIO()
-    buffer.write(pdf.output(dest="S").encode("latin1"))
-    buffer.seek(0)
-    st.download_button("Télécharger l'ordonnance", buffer, "ordonnance.pdf", "application/pdf")
+if generer_clicked:
+    if not patient_data["Lieu_de_Delivrance"].strip():  # Vérifie si le champ est vide
+        st.error("Le lieu de délivrance est obligatoire. Veuillez le renseigner.")
+    else:
+        # Génération du PDF seulement si le lieu de délivrance est rempli
+        pdf = FPDF()
+        pdf.add_page()
+        
+        pdf.set_font("Arial", '', 10)
+        pdf.multi_cell(0, 5, f"Lieu de délivrance :\n{patient_data['Lieu_de_Delivrance']}", align="L")
+
+        # Génération du fichier
+        buffer = io.BytesIO()
+        buffer.write(pdf.output(dest="S").encode("latin1"))
+        buffer.seek(0)
+        st.download_button("Télécharger l'ordonnance", buffer, "ordonnance.pdf", "application/pdf")
