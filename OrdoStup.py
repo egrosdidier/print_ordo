@@ -310,7 +310,6 @@ patient_data["Chevauchement_Autorise"] = st.selectbox("Chevauchement autorisé",
 patient_data["Lieu_de_Delivrance"] = st.text_input("Lieu de délivrance", placeholder="Ex: Pharmacie X, Centre médical Y")
 
 if st.button("Générer l'ordonnance PDF"):
-
 # Initialiser le document PDF avant toute action
     pdf = FPDF()
     pdf.add_page()
@@ -337,11 +336,11 @@ if st.button("Générer l'ordonnance PDF"):
     pdf.cell(0, 5, f"FINESS: {preferences['finess']}", ln=True, align="L")
 
 # Ajout du deuxième logo (haut à droite)
-if preferences.get("logo_droit") and os.path.exists(preferences["logo_droit"]):
-    try:
-        pdf.image(preferences["logo_droit"], x=150, y=10, w=40)  # Logo à droite (aligné au même niveau)
-    except RuntimeError:
-        st.warning("Erreur lors du chargement du logo de droite : fichier invalide.")
+   if preferences.get("logo_droit") and os.path.exists(preferences["logo_droit"]):
+        try:
+            pdf.image(preferences["logo_droit"], x=150, y=10, w=40)  # Logo à droite (aligné au même niveau)
+        except RuntimeError:
+            st.warning("Erreur lors du chargement du logo de droite : fichier invalide.")
 
 # Bloc identification médecin   
     pdf.set_xy(150, 50)
@@ -390,25 +389,25 @@ if preferences.get("logo_droit") and os.path.exists(preferences["logo_droit"]):
         pdf.set_font("Arial", '', 10)  # Texte standard
         pdf.cell(0, 5, f"N° Sécurité Sociale : {num_secu_formatte} - Clé : {cle_secu:02d}", ln=True, align="R")
 
-pdf.set_font("Arial", 'B', 12)  # Texte en gras et taille 12
+    pdf.set_font("Arial", 'B', 12)  # Texte en gras et taille 12
 
 # Titre
 # Définition du titre selon l'ALD 30
-titre_prescription = "PRESCRIPTIONS ALD 30" if patient_data["ALD_30"] == "Oui" else "PRESCRIPTIONS MÉDICALES"
+    titre_prescription = "PRESCRIPTIONS ALD 30" if patient_data["ALD_30"] == "Oui" else "PRESCRIPTIONS MÉDICALES"
 # Position du titre
-pdf.cell(0, 5, "", ln=True)  # Ligne vide pour espacement
-y_position = pdf.get_y()  # Récupération de la position actuelle
+    pdf.cell(0, 5, "", ln=True)  # Ligne vide pour espacement
+    y_position = pdf.get_y()  # Récupération de la position actuelle
 # Ajout du premier trait horizontal
-pdf.set_line_width(0.5)
-pdf.line(10, y_position, 200, y_position)  # Trait horizontal supérieur
+    pdf.set_line_width(0.5)
+    pdf.line(10, y_position, 200, y_position)  # Trait horizontal supérieur
 # Ajout du titre
-pdf.set_xy(10, y_position + 3)  # Légèrement en dessous du trait
-pdf.cell(190, 10, titre_prescription, border=0, ln=True, align="C")
+    pdf.set_xy(10, y_position + 3)  # Légèrement en dessous du trait
+    pdf.cell(190, 10, titre_prescription, border=0, ln=True, align="C")
 # Ajout du deuxième trait horizontal
-y_position = pdf.get_y() + 2  # Nouvelle position après le titre
-pdf.line(10, y_position, 200, y_position)  # Trait horizontal inférieur
+    y_position = pdf.get_y() + 2  # Nouvelle position après le titre
+    pdf.line(10, y_position, 200, y_position)  # Trait horizontal inférieur
 # Ajout d'un espacement après le titre
-pdf.cell(0, 5, "", ln=True)
+    pdf.cell(0, 5, "", ln=True)
     
 # Ajouter médicament
     pdf.set_font("Arial", 'B', 12)
