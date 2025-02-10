@@ -306,10 +306,14 @@ decomposition_finale = {unite: quantite for unite, quantite in decomposition_fin
 patient_data["Duree"] = st.number_input("Durée du traitement (jours)", min_value=1, step=1)
 patient_data["Rythme_de_Delivrance"] = st.number_input("Rythme de délivrance (jours)", min_value=1, step=1)
 patient_data["Chevauchement_Autorise"] = st.selectbox("Chevauchement autorisé", ["Oui", "Non"], index=1)
-# Saisie du lieu de délivrance en multi-ligne
+
 # Saisie du lieu de délivrance en multi-ligne, obligatoire
-patient_data["Lieu_de_Delivrance"] = st.text_area("Lieu de délivrance (Nom + Adresse)", 
+# Saisie multi-ligne
+patient_data["Lieu_de_Delivrance"] = st.text_area("Lieu de délivrance (Nom + Adresse)",
                                                   placeholder="Exemple : \nPharmacie Centrale\n12 rue des Lilas, 75000 Paris")
+# Bouton pour valider la saisie
+if st.button("Valider"):
+    st.success("Lieu de délivrance validé ✅")
 # Vérification que le champ est rempli
 if not patient_data["Lieu_de_Delivrance"].strip():
     st.error("Le lieu de délivrance est obligatoire. Veuillez le renseigner avant de générer l'ordonnance.")
@@ -479,7 +483,7 @@ if st.button("Générer l'ordonnance PDF"):
 # Vérification après un clic sur le bouton
     if st.button("Générer l'ordonnance PDF"):
         if not patient_data["Lieu_de_Delivrance"].strip():  # Vérifie si le champ est vide
-            st.error("Le lieu de délivrance est obligatoire. Veuillez le renseigner.")
+            st.error("Le lieu de délivrance est obligatoire. Veuillez le renseigner et le valider.")
             st.session_state.pdf_ready = False  # Bloque la génération
         else:
             # Génération du PDF seulement si le lieu de délivrance est rempli
